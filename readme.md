@@ -4,7 +4,7 @@ A pipelined ARM LEGv8 CPU written in Verilog.
 
 LEGv8 is subset of ARM instruction set.
 
-Supported instructions include: LDUR, STUR, ADD, SUB, ORR, AND	, B
+Supported instructions include: LDUR, STUR, ADD, SUB, ORR, AND and CBZ.
 
 For a brief introduction to what this project is all about and how different modules work, please look at the slides [here.](http://harmanani.github.io/classes/csc320/Notes/ch04.pdf)
 
