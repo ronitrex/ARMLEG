@@ -9,11 +9,11 @@ Supported instructions include: LDUR, STUR, ADD, SUB, ORR, AND	, B
 For a brief introduction to what this project is all about and how different modules work, please look at the slides [here.](http://harmanani.github.io/classes/csc320/Notes/ch04.pdf)
 
 To summarize, the full datapath without pipelining looks like :
-![](https://github.com/ronitrex/ARMLEG/blob/master/readme/FullDataPath.png)
+![](./readme/FullDataPath.png)
 
 With introduction of pipeline :
 
-![](https://github.com/ronitrex/ARMLEG/blob/master/readme/DataPathwControl.png)
+![](./readme/DataPathwControl.png)
 
 
 # Running :
