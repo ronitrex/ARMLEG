@@ -12,7 +12,8 @@ To summarize, the full datapath without pipelining looks like :
 ![](https://github.com/ronitrex/ARMLEG/blob/master/readme/FullDataPath.png)
 
 With introduction of pipeline :
-![](https://github.com/ronitrex/ARMLEG/blob/master/readme/DataPathwControl.png
+
+![](https://github.com/ronitrex/ARMLEG/blob/master/readme/DataPathwControl.png)
 
 
 # Running :
