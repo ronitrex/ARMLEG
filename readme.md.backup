@@ -126,7 +126,7 @@ The operation codes determine how the ALU treats the data it receives from the R
 - Branch target address
 
 | ALU Operation Code|   Operation performed	| 
-| ------------------|:----------|:----------------------------------|	
+| ------------------|:----------|
 |	4'b0000	|A AND B	|
 |	4'b0001	|A OR B	|
 |	4'b0010	|A ADD B	|

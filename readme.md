@@ -126,7 +126,7 @@ The operation codes determine how the ALU treats the data it receives from the R
 - Branch target address
 
 | ALU Operation Code|   Operation performed	| 
-| ------------------|:----------|:----------------------------------|	
+| ------------------|:----------|
 |	4'b0000	|A AND B	|
 |	4'b0001	|A OR B	|
 |	4'b0010	|A ADD B	|
@@ -188,37 +188,37 @@ This instruction will load to X1 the value pointed by X31 plus 8 bytes. This is 
 		Data[8]  = 64'h1111111111111111;
 So this will load the value *64'h1111111111111111* from register #8 in Data memory to our X1 register in the Register module. 
 
-	##### **LDUR X1, [X31, #8]**:
-	
-	| Instruction Opcode|  DT_address	| op | Rn| Rt|
-	|:------------------|:----------|:---------------|:---------------|:-----------|
-	|7c2 (Hex)|#8|00|X31|X1|
-	|11111000010|000001000|00|11111|00001|
-	
-	Data[0-3] = 'b11111000; 010~00000 ; 1000~00~11; 111~00001
-	
-	| Register[location]|  Binary Value	| Hex Value |
-	|:------------------|:----------|:---------------|	
-	|Data[0]|	'b11111000|	'hf8		|
-	|Data[1]|	'b01000000|	'h40		|
-	|Data[2]| 	'b10000011|	'h83		|
-	|Data[3]| 	'b11100001|	'he1		|  
-	
-	##### **LDUR X2, [X31, #16]:**
-	
-	| Instruction Opcode|  DT_address	| op | Rn| Rt|
-	|:------------------|:----------|:---------------|:---------------|:-----------|
-	|7c2 (Hex)|#16|00|X31|X2|
-	|11111000010|000010000|00|11111|00010|
-	
-	  Data[4-7] = 'b11111000; 010~00001; 0000~00~11; 111~00010
-	
-	| Register[location]|  Binary Value	| Hex Value |
-	|:------------------|:----------|:---------------|	
-	|Data[4]|	'b11111000|	'hf8		|
-	|Data[4]|	'b01000001|	'h40		|
-	|Data[6]| 	'b00000011|	'h83		|
-	|Data[7]| 	'b11100010|	'he1		|
+##### **LDUR X1, [X31, #8]**:
+
+| Instruction Opcode|  DT_address	| op | Rn| Rt|
+|:------------------|:----------|:---------------|:---------------|:-----------|
+|7c2 (Hex)|#8|00|X31|X1|
+|11111000010|000001000|00|11111|00001|
+
+Data[0-3] = 'b11111000; 010~00000 ; 1000~00~11; 111~00001
+
+| Register[location]|  Binary Value	| Hex Value |
+|:------------------|:----------|:---------------|	
+|Data[0]|	'b11111000|	'hf8		|
+|Data[1]|	'b01000000|	'h40		|
+|Data[2]| 	'b10000011|	'h83		|
+|Data[3]| 	'b11100001|	'he1		|  
+
+##### **LDUR X2, [X31, #16]:**
+
+| Instruction Opcode|  DT_address	| op | Rn| Rt|
+|:------------------|:----------|:---------------|:---------------|:-----------|
+|7c2 (Hex)|#16|00|X31|X2|
+|11111000010|000010000|00|11111|00010|
+
+  Data[4-7] = 'b11111000; 010~00001; 0000~00~11; 111~00010
+
+| Register[location]|  Binary Value	| Hex Value |
+|:------------------|:----------|:---------------|	
+|Data[4]|	'b11111000|	'hf8		|
+|Data[4]|	'b01000001|	'h40		|
+|Data[6]| 	'b00000011|	'h83		|
+|Data[7]| 	'b11100010|	'he1		|
 
 
 
