@@ -1,5 +1,3 @@
-// Name : Ronit Kumar
-
 `timescale 1ns / 1ps
 `include "ProgramCounter.v"
 `include "adder.v"
