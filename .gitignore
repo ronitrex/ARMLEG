@@ -1,3 +1,5 @@
 .library_mapping.xml
 .project
 .readme.md-backup
+/src/ARMLEG
+/src/ARMLEGvtf.vcd

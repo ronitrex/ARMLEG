@@ -2,8 +2,8 @@ module DataMemory
 (
   input [63:0] inputAddress,
   input [63:0] inputData,
-  input MemRead,
-  input MemWrite,
+  input memRead,
+  input memWrite,
   output reg [63:0] outputData
 );
 
@@ -12,9 +12,6 @@ module DataMemory
   integer initCount;
 
   initial begin
-//    for (initCount = 0; initCount < 32; initCount = initCount + 1) begin
-//      Data[initCount] = initCount * 100;
-//    end
 
    Data[0]  = 64'h0000000000000000;
    Data[8]  = 64'h1111111111111111;
@@ -32,12 +29,12 @@ module DataMemory
    
   end
 
-    always @(inputAddress, inputData, MemRead, MemWrite) begin
-      if (MemWrite == 1) begin
+    always @(*) begin
+      if (memWrite == 1) begin
         Data[inputAddress] = inputData;
       end
 
-      if (MemRead == 1) begin
+      if (memRead == 1) begin
         outputData = Data[inputAddress];
       end
     end

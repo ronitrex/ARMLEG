@@ -4,7 +4,7 @@ module SignExtend
   output reg [63:0] outImmediate
 );
 
-    always @(inputInstruction) begin
+    always @(*) begin
 
       if (inputInstruction[31:26] == 6'b000101) begin // B
         outImmediate[25:0] = inputInstruction[25:0];

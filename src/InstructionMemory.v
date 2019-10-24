@@ -132,7 +132,7 @@ module InstructionMemory
 
   end
 
-  always @(PC) begin
+  always @(*) begin
     CPU_Instruction[8:0] = Data[PC+3];
     CPU_Instruction[16:8] = Data[PC+2];
     CPU_Instruction[24:16] = Data[PC+1];

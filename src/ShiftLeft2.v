@@ -4,7 +4,7 @@ module ShiftLeft2
   output reg [63:0] outputData
 );
 
-  always @(inputData) begin
+  always @(*) begin
     outputData = inputData << 2;
   end
 endmodule

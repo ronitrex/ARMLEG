@@ -1,14 +1,9 @@
-// Name : Ronit Kumar
-
 `timescale 1ns / 1ps
 
-`timescale 1ns / 1ps
+module Clock(
+output reg clk
+);
 
-module Clock(clk);
-
-output reg clk;
-// clock
-// 20 ns clock running forever
 always @(posedge clk)
 begin
 		#0.01
@@ -23,7 +18,7 @@ end
 initial begin
 clk = 1;
 #5;
-// Clock terminates after 100ns
+// Clock terminates after 5ns
 $finish;
 end
 endmodule

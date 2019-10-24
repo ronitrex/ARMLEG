@@ -5,7 +5,7 @@ module ALU_Control
   output reg [3:0] ALU_operation
 );
 
-  always @(ALU_Op, Opcode_field) case (ALU_Op)
+  always @(*) case (ALU_Op)
       2'b00 : ALU_operation = 4'b0010;
       2'b01 : ALU_operation = 4'b0111;
       2'b10 : case (Opcode_field)

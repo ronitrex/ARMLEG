@@ -9,7 +9,7 @@ module DataMemMux
   always @(*) case (MEM2REG)
   0: out <= aluOutput;
   1: out <= readData;
-  default: out <= 63'bz;
+  default: out <= 64'bz;
   endcase
 
 endmodule

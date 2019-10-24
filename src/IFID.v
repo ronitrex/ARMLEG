@@ -7,7 +7,7 @@ module IFID
   output reg [31:0] IC_out
 );
 
-  always @(negedge CLOCK) begin
+  always @(*) begin
     PC_out <= PC_in;
     IC_out <= IC_in;
   end

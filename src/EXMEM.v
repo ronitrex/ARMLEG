@@ -1,22 +1,22 @@
 module EXMEM
 (
   input CLOCK,
-  input isBranch_in, 	// M Stage
-  input memRead_in, 		// M Stage
-  input memwrite_in, 		// M Stage
-  input regwrite_in, 		// WB Stage
-  input mem2reg_in, 		// WB Stage
+  input isBranch_in, 			// M Stage
+  input memRead_in, 			// M Stage
+  input memwrite_in, 			// M Stage
+  input regwrite_in, 			// WB Stage
+  input mem2reg_in, 			// WB Stage
   input [63:0] shifted_PC_in,
   input alu_zero_in,
   input [63:0] alu_result_in,
   input [63:0] write_data_mem_in,
   input [4:0] write_reg_in,
-  output reg isBranch_out, 	// M Stage
-
-  output reg memRead_out, 		// M Stage
-  output reg memwrite_out, 		// M Stage
-  output reg regwrite_out,		// WB Stage
-  output reg mem2reg_out,		// WB Stage
+  
+  output reg isBranch_out, 			// M Stage
+  output reg memRead_out, 			// M Stage
+  output reg memwrite_out, 			// M Stage
+  output reg regwrite_out,			// WB Stage
+  output reg mem2reg_out,			// WB Stage
   output reg [63:0] shifted_PC_out,
   output reg alu_zero_out,
   output reg [63:0] alu_result_out,
@@ -40,6 +40,6 @@ module EXMEM
     alu_zero_out <= alu_zero_in;
     alu_result_out <= alu_result_in;
     write_data_mem_out <= write_data_mem_in;
-  write_reg_out <= write_reg_in;
+  	write_reg_out <= write_reg_in;
   end
 endmodule

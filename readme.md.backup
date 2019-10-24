@@ -25,8 +25,7 @@ Of these 32 registers, 31 registers X0 to X30, are the *general purpose register
 In the full ARMv8 instruction set, register 31 is XZR in most instructions
 but the stack point ( SP ) in others. But in LEGv8, the 32nd register or X32 is always initialized to 0. That is, it is always XZR in LEGv8. And SP is always register 28.
 
-The LEGv8 instruction set supports instructions like LDUR, STUR, ADD, SUB, ORR, AND and CBZ. The project implementation includes a subset of the core LEGv8
-instruction set:
+The project implementation includes a subset of the core LEGv8 instruction set:
 
 * The memory-reference instructions load register unscaled ( LDUR ) and store register unscaled ( STUR )
 * The arithmetic-logical instructions ADD, SUB, AND and ORR
@@ -35,7 +34,7 @@ instruction set:
 
 ## Architecture
 
-Let's start with an overview of the CPU. The CPU comprises of a ***Program Counter*** [*PC*], ***Instruction Memory***, ***Register module*** [*Registers*], ***Arithmetic Logic Unit*** [*ALU*] and ***Data Memory***.
+Let's start with an abstract view of the CPU. The CPU comprises of a ***Program Counter*** [*PC*], ***Instruction Memory***, ***Register module*** [*Registers*], ***Arithmetic Logic Unit*** [*ALU*] and ***Data Memory***.
 
 The Program Counter or PC reads the instructions from the instruction memory, then modifies the Register module to hold the current instruction. The Registers pass the values in instruction memory to the ALU to perform operations. Depending on the type of operation performed, the result may need to be loaded from or stored to the data memory. If the result needs to be loaded from the data memory, it can be written back to the Register module to perform any further operations.
 ![](./readme/CPUOverview.png)
@@ -85,13 +84,14 @@ Some examples of instructions that have been implemented in this project:
 
 | Instruction  	|   Instruction Name | Instruction Type | Instruction Opcode (Hex) |Instruction Expression|
 | ----------------|:-------------:| -----:|-----------------------------:|------------:|
-| LDUR | LoaD (Unscaled offset) Register	|	D-type	| 7C2|	Register[Rt]=Mount(Register[Rn]+DT_address)|
-| STUR |STore (Unscaled offset) Register|	D-type	|7C0|	Mount(Register[Rn]+DT_address)=Register[Rt]|
-| ADD | Add		|	R-type	|	458|Register[Rd]=Register[Rn] + Register[Rm] |
-|SUB	| Subtract	| R-type	|	658	|Register[Rd]=Register[Rn] - Register[Rm]
-|ORR|Inclusive OR|R-type| 550|Register[Rd]=Register[Rn] OR Register[Rm]|
-|AND|AND|R-type|450|Register[Rd]=Register[Rn] AND Register[Rm]|
-|CBZ|Compare and Branch if Zero|CB-type|5A0-5A7|if(Register[Rt]==0) --> *PC=PC+COND_ BR_address*}|
+| LDUR | LoaD (Unscaled offset) Register	|	D-type	| 7C2|	Register[Rt] = Mount(Register[Rn] + DT_address)|
+| STUR |STore (Unscaled offset) Register|	D-type	|7C0|	Mount(Register[Rn] + DT_address) = Register[Rt]|
+| ADD | Add		|	R-type	|	458|Register[Rd] = Register[Rn] + Register[Rm] |
+|SUB	| Subtract	| R-type	|	658	|Register[Rd] = Register[Rn] - Register[Rm]
+|ORR|Inclusive OR|R-type| 550|Register[Rd] = Register[Rn] OR Register[Rm]|
+|AND|AND|R-type|450|Register[Rd] = Register[Rn] AND Register[Rm]|
+|CBZ|Compare and Branch if Zero|CB-type|5A0-5A7|if(Register[Rt]==0) --> *PC = PC + COND_ BR_address*}|
+|B|Branch|B-type|0A0-0BF|*PC = PC + BR_address*
 
 
 
@@ -125,15 +125,16 @@ The operation codes determine how the ALU treats the data it receives from the R
 - Memory address for load/store
 - Branch target address
 
-| ALU Operation Code|   Operation performed	| 
+| ALU Operation code|   Operation performed	| 
 | ------------------|:----------|
 |	4'b0000	|A AND B	|
 |	4'b0001	|A OR B	|
 |	4'b0010	|A ADD B	|
 |	4'b0110	|A SUBTRACT B|
-|	4'b0111	|B|
+|	4'b0111	|B (pass input B)|
 |	4'b1100	|NOR|
 |	4'b1111	|default or edge cases|
+
 
 
 ### Data Memory
@@ -157,25 +158,44 @@ The Data Memory has been initialized as follows.
 |Data[88]| 	64'hbbbbbbbbbbbbbbbb|
 |Data[96]| 	64'hcccccccccccccccc|
 
+### Sign-extend and Shift Left 2
 
+The Instruction Memory is read in chunks of 32-bits whereas the CPU instructiom cycle is of 64 bits. To rectify this, A Sign Extend unit is added when a B-type instruction needs to be executed. 
+
+The program counter is incremented by 4 at a time. Therefore, 4 Program Counters per instruction are required. Each Program Counter corresponds to each byte being read. If the bits are shifted to the left by 2, which is similar to multiplying by 4, the program counter required for the instruction to be processed can be obtained.  
+Example: Instruction 4 will start at Program Counter 16.  
+Instruction 4 in binary -> 5'b00100  
+Applying 2 Shift left -> 5'b10000 - (16, which is the program counter required.)
+
+![](./readme/Simpledatapath.png)
 
 ### Control Unit
 
 A control unit is added to route the flow of data as per requirements. 
+![](./readme/datapathwithcontrol.png)
 
-  input [1:0] aluop_in, 	       // EX Stage
-  input alusrc_in, 			         // EX Stage
-  input isBranch_in, 	       // M Stage
-  input memRead_in, 		         // M Stage
-  input memwrite_in, 		         // M Stage
-  input regwrite_in, 		         // WB Stage
-  input mem2reg_in, 
+An additional OR-gate (at the upper right) is used to control the multiplexor that chooses between the branch target and the sequential instruction
+following the previous instruction.  
+The new improved architecture can now execute the basic instructions load-store register, ALU operations, and branches in a single clock cycle.
 
-![](./readme/Control.png)
+![](./readme/uncondbranch.png)
 
+### Pipelining
+Pipelining is an implementation technique in which multiple instructions are
+overlapped in execution.
+LEGv8 instructions classically take five steps:
 
+1. **Instruction Fetch** or *IF* -> Fetch instruction from memory.
+2. **Instruction Decode** or *ID* -> Read registers and decode the instruction.
+3. **Execute** or *EX* -> Execute the operation or calculate an address. 
+4. **Memory** or *M*-> Access an operand in data memory (if necessary). 
+5. **Write Back** or *WB* -> Write the result into a register (if necessary). 
 
+![](./readme/pipelinestage.png)
 
+## Final Overview
+Combining the Pipelined architecture with the Control Unit, gives the complete architecture for this project.
+![](./readme/PipelineandControl.png)
 #### Load operation :
 LDUR, or Load (unscaled) Register, loads a value from the Data Memory on to the Register Module.
 
@@ -188,37 +208,37 @@ This instruction will load to X1 the value pointed by X31 plus 8 bytes. This is 
 		Data[8]  = 64'h1111111111111111;
 So this will load the value *64'h1111111111111111* from register #8 in Data memory to our X1 register in the Register module. 
 
-	##### **LDUR X1, [X31, #8]**:
-	
-	| Instruction Opcode|  DT_address	| op | Rn| Rt|
-	|:------------------|:----------|:---------------|:---------------|:-----------|
-	|7c2 (Hex)|#8|00|X31|X1|
-	|11111000010|000001000|00|11111|00001|
-	
-	Data[0-3] = 'b11111000; 010~00000 ; 1000~00~11; 111~00001
-	
-	| Register[location]|  Binary Value	| Hex Value |
-	|:------------------|:----------|:---------------|	
-	|Data[0]|	'b11111000|	'hf8		|
-	|Data[1]|	'b01000000|	'h40		|
-	|Data[2]| 	'b10000011|	'h83		|
-	|Data[3]| 	'b11100001|	'he1		|  
-	
-	##### **LDUR X2, [X31, #16]:**
-	
-	| Instruction Opcode|  DT_address	| op | Rn| Rt|
-	|:------------------|:----------|:---------------|:---------------|:-----------|
-	|7c2 (Hex)|#16|00|X31|X2|
-	|11111000010|000010000|00|11111|00010|
-	
-	  Data[4-7] = 'b11111000; 010~00001; 0000~00~11; 111~00010
-	
-	| Register[location]|  Binary Value	| Hex Value |
-	|:------------------|:----------|:---------------|	
-	|Data[4]|	'b11111000|	'hf8		|
-	|Data[4]|	'b01000001|	'h40		|
-	|Data[6]| 	'b00000011|	'h83		|
-	|Data[7]| 	'b11100010|	'he1		|
+##### **LDUR X1, [X31, #8]**:
+
+| Instruction Opcode|  DT_address	| op | Rn| Rt|
+|:------------------|:----------|:---------------|:---------------|:-----------|
+|7c2 (Hex)|#8|00|X31|X1|
+|11111000010|000001000|00|11111|00001|
+
+Data[0-3] = 'b11111000; 010~00000 ; 1000~00~11; 111~00001
+
+| Register[location]|  Binary Value	| Hex Value |
+|:------------------|:----------|:---------------|	
+|Data[0]|	'b11111000|	'hf8		|
+|Data[1]|	'b01000000|	'h40		|
+|Data[2]| 	'b10000011|	'h83		|
+|Data[3]| 	'b11100001|	'he1		|  
+
+##### **LDUR X2, [X31, #16]:**
+
+| Instruction Opcode|  DT_address	| op | Rn| Rt|
+|:------------------|:----------|:---------------|:---------------|:-----------|
+|7c2 (Hex)|#16|00|X31|X2|
+|11111000010|000010000|00|11111|00010|
+
+  Data[4-7] = 'b11111000; 010~00001; 0000~00~11; 111~00010
+
+| Register[location]|  Binary Value	| Hex Value |
+|:------------------|:----------|:---------------|	
+|Data[4]|	'b11111000|	'hf8		|
+|Data[4]|	'b01000001|	'h40		|
+|Data[6]| 	'b00000011|	'h83		|
+|Data[7]| 	'b11100010|	'he1		|
 
 
 

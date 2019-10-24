@@ -1,6 +1,5 @@
-// Name : Ronit Kumar
-
 `timescale 1ns / 1ps
+
 module id(
   input [10:0] id_in,
   output reg Reg2Loc,

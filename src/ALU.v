@@ -7,7 +7,7 @@ module ALU
   output reg ZEROFLAG
 );
 
-  always @(A or B or CONTROL) begin
+  always @(*) begin
     case (CONTROL)
       4'b0000 : RESULT = A & B;
       4'b0001 : RESULT = A | B;
