@@ -1,23 +1,25 @@
+`timescale 1ns / 1ps
+
 module MEMWB
 (
   input CLOCK,
-  input [63:0] mem_address_in,
-  input [63:0] mem_data_in,
-  input [4:0] write_reg_in,
-  input regwrite_in,
-  input mem2reg_in,
-  output reg [63:0] mem_address_out,
-  output reg [63:0] mem_data_out,
-  output reg [4:0] write_reg_out,
-  output reg regwrite_out,
-  output reg mem2reg_out
+  input [63:0] memAddress_in,
+  input [63:0] memData_in,
+  input [4:0] writeReg_in,
+  input regWrite_in,
+  input memToReg_in,
+  output reg [63:0] memAddress_out,
+  output reg [63:0] memData_out,
+  output reg [4:0] writeReg_out,
+  output reg regWrite_out,
+  output reg memToReg_out
 );
 
-  always @(*) begin
-    regwrite_out <= regwrite_in;
-    mem2reg_out <= mem2reg_in;
-    mem_address_out <= mem_address_in;
-    mem_data_out <= mem_data_in;
-    write_reg_out <= write_reg_in;
+  always @(posedge CLOCK) begin
+    regWrite_out <= regWrite_in;
+    memToReg_out <= memToReg_in;
+    memAddress_out <= memAddress_in;
+    memData_out <= memData_in;
+    writeReg_out <= writeReg_in;
   end
 endmodule

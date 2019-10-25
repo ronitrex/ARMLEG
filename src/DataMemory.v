@@ -9,8 +9,6 @@ module DataMemory
 
   reg [63:0] Data[127:0];
 
-  integer initCount;
-
   initial begin
 
    Data[0]  = 64'h0000000000000000;

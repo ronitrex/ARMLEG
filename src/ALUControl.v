@@ -1,4 +1,4 @@
-module ALU_Control
+module ALUControl
 (
   input [1:0] ALU_Op,
   input [10:0] Opcode_field,

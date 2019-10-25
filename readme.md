@@ -23,7 +23,7 @@ To favor simplicity, arithmetic operations are formed with two sources and one d
 The LEGv8 instruction set is a subset of ARM instruction set. LEGv8 has a 32 × 64-bit register module which is used for frequently accessed data. The 64-bit data is called a *“doubleword”*.  
 Of these 32 registers, 31 registers X0 to X30, are the *general purpose registers*.
 In the full ARMv8 instruction set, register 31 is XZR in most instructions
-but the stack point ( SP ) in others. But in LEGv8, the 32nd register or X32 is always initialized to 0. That is, it is always XZR in LEGv8. And SP is always register 28.
+but the stack point ( SP ) in others. But in LEGv8, the 32nd register or X31 is always initialized to 0. That is, it is always XZR in LEGv8. And SP is always register 28.
 
 The project implementation includes a subset of the core LEGv8 instruction set:
 
@@ -160,12 +160,12 @@ The Data Memory has been initialized as follows.
 
 ### Sign-extend and Shift Left 2
 
-The Instruction Memory is read in chunks of 32-bits whereas the CPU instructiom cycle is of 64 bits. To rectify this, A Sign Extend unit is added when a B-type instruction needs to be executed. 
+The Instruction Memory is read in chunks of 32-bits, whereas the CPU instruction is of 64 bits. To rectify this, A Sign Extend unit is added when a B-type instruction needs to be executed. 
 
-The program counter is incremented by 4 at a time. Therefore, 4 Program Counters per instruction are required. Each Program Counter corresponds to each byte being read. If the bits are shifted to the left by 2, which is similar to multiplying by 4, the program counter required for the instruction to be processed can be obtained.  
+To read a 32-bit instruction, 4 Program Counters per instruction are required. Each Program Counter corresponds to each byte being read. The program counter is therefore incremented by 4 at a time. If the bits are shifted to the left by 2, which is similar to multiplying by 4, the program counter required for the instruction to be processed can be obtained.  
 Example: Instruction 4 will start at Program Counter 16.  
 Instruction 4 in binary -> 5'b00100  
-Applying 2 Shift left -> 5'b10000 - (16, which is the program counter required.)
+Applying 2 left shifts -> 5'b10000 - (16, which is the program counter required.)
 
 ![](./readme/Simpledatapath.png)
 
@@ -185,7 +185,7 @@ Pipelining is an implementation technique in which multiple instructions are
 overlapped in execution.
 LEGv8 instructions classically take five steps:
 
-1. **Instruction Fetch** or *IF* -> Fetch instruction from memory.
+1. **Instruction Fetch** or *IF* -> Fetch instruction from memory.  
 2. **Instruction Decode** or *ID* -> Read registers and decode the instruction.
 3. **Execute** or *EX* -> Execute the operation or calculate an address. 
 4. **Memory** or *M*-> Access an operand in data memory (if necessary). 

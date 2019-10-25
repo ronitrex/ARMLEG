@@ -1,21 +1,22 @@
+`timescale 1ns / 1ps
+
 module ProgramCounter
 (
-  input clk,
-  input reset,
-  input [63:0] pc_in,
-  output reg [63:0] pc_out
+  input CLOCK,
+  input RESET,
+  input [63:0] programCounter_in,
+  output reg [63:0] programCounter_out
 );
-
-  initial begin
-      pc_out = 0;
-  end
-
-  always @(posedge clk) begin
-      pc_out = pc_in;
-  end
-
-  always @(reset) begin
-    pc_out = 0;
-  end
+	 
+	always @(posedge CLOCK) begin
+		if (programCounter_in === 64'bx) begin
+	    	programCounter_out  <= 0;
+		end	else begin
+		 	 programCounter_out <= programCounter_in;
+		end
+	end
+	always @(RESET) begin
+	  programCounter_out = 0;
+	end
 
 endmodule

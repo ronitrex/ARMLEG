@@ -1,14 +1,16 @@
+`timescale 1ns / 1ps
+
 module IFID
 (
   input CLOCK,
-  input [63:0] PC_in,
-  input [31:0] IC_in,
-  output reg [63:0] PC_out,
-  output reg [31:0] IC_out
+  input [63:0] programCounter_in,
+  input [31:0] CPUInstruction_in,
+  output reg [63:0] programCounter_out,
+  output reg [31:0] CPUInstruction_out
 );
 
-  always @(*) begin
-    PC_out <= PC_in;
-    IC_out <= IC_in;
+  always @(posedge CLOCK) begin
+    programCounter_out <= programCounter_in;
+    CPUInstruction_out <= CPUInstruction_in;
   end
 endmodule
