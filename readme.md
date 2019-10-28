@@ -140,7 +140,8 @@ The operation codes determine how the ALU treats the data it receives from the R
 ### Data Memory
 
 
-The Data memory unit is a state element with inputs for the address and the write data, and a single output for the read result. There are separate read and write controls, although only one of these may be asserted on any given clock.
+The Data memory unit is a state element with inputs for the address and the write data, and a single output for the read result. There are separate read and write controls, although only one of these may be asserted on any given clock.  
+In this project, it is initialized as follows:
 
 | Register[location]|   Value	| 
 | ------------------|:----------|	
@@ -161,8 +162,7 @@ The Data memory unit is a state element with inputs for the address and the writ
 
 ### Sign-extend and Shift Left 2
 
-The Instruction Memory is read in chunks of 32-bits, whereas the CPU instruction is of 64 bits. The sign extension unit has the 32-bit instruction as input that selects a 9-bit for *load* and *store* or a 19-bit field for *compare and branch on zero* that
-is sign-extended into a 64-bit result appearing on the output.
+The Instruction Memory is read in chunks of 32-bits, whereas the CPU instruction is of 64 bits. The sign extension unit has the 32-bit instruction as input. From that, it selects a 9-bit for *load* and *store* or a 19-bit field for *compare and branch on zero*. It is then sign-extended into a 64-bit result appearing on the output.
 
 To read a 32-bit instruction, 4 program counters per instruction are required. Each program counter corresponds to each byte being read. The program counter is therefore incremented by 4 at a time. If the bits are shifted to the left by 2, which is similar to multiplying by 4, the program counter required for the instruction to be processed can be obtained.  
 Example: Instruction 4 will start at Program Counter 16.  
@@ -178,7 +178,7 @@ A control unit is added to route the flow of data as per requirements.
 
 An additional OR-gate (at the upper right) is used to control the multiplexor that chooses between the branch target and the sequential instruction
 following the previous instruction.  
-The new improved architecture can now execute the basic instructions load-store register, ALU operations, and branches in a single clock cycle.
+The new improved architecture can now execute the basic instructions *load-store register*, *ALU operations*, and *branches* in a single clock cycle.
 
 ![](./readme/uncondbranch.png)
 
@@ -211,7 +211,6 @@ To test the performance and correctness of the pipeline, some instructions are e
 		 registerData[5] <= 64'd5;
 		 registerData[6] <= 64'd6;
 	  end
-	  
 
 The Instruction Memory is initialized with the following instructions:
 
@@ -225,7 +224,7 @@ The Instruction Memory is initialized with the following instructions:
 A summary of the instructions is provided with expected results and how the instructions are worked out for the Instruction Memory.
 
 
-##### LDUR X10, [X1, #40]
+#### LDUR X10, [X1, #40]
 This instruction will load to X10 the value at X1 plus byte offset 40. The X1 register is initialized with the value *64'd16* [*registerData[1] <= 64'd16*]. This will load the value stored in Data memory at register address *(d'16 + d'40) =* **d'56** to register X10. The Data memory holds the value *64'd7* at the 56th register [*memoryData[56] = 64'd7*]:
 
 So this will load the value *64'd7* stored at address #56 in Data memory to X10 register in the Register module. 
@@ -247,7 +246,7 @@ Data[0-3] = 'b11111000; 010~00010 ; 1000~00~00; 001~01010
 |instructionMemoryData[2]| 	'b10000000|	
 |instructionMemoryData[3]| 	'b00101010|	 
 
-##### SUB X11, X2, X3
+#### SUB X11, X2, X3
 This instruction will load to X11 the value at X2 [*registerData[2] <= 64'd12*] *minus* the value at X3 [*registerData[3] <= 64'd3*]. This will  result in *(d'12 - d'3) = d'9*. 
 
 So this will load the value *d'9* to X11 register in the Register module. 
@@ -261,7 +260,7 @@ So this will load the value *d'9* to X11 register in the Register module.
 |11001011000|00011|000000|00010|01011|
 
 
-Data[4-7] = 'b11001011; 000~00011; 000000~00; 010~01011
+Data[4-7] = 'b11001011; 000~00011~; 000000~00; 010~01011
 
 
 | Register[location]|  Binary Value	| 
@@ -271,7 +270,7 @@ Data[4-7] = 'b11001011; 000~00011; 000000~00; 010~01011
 |instructionMemoryData[6]| 	'b00000000|	
 |instructionMemoryData[7]| 	'b01001011|	
 
-##### ADD X12, X3, X4
+#### ADD X12, X3, X4
 This instruction will load to X12 the value at X3 [*registerData[3] <= 64'd3*] *plus* the value at X4 [*registerData[4] <= 64'd4*]. This will  result in *(d'3 + d'4) = d'7*.
 	 
 		 
@@ -286,7 +285,7 @@ So this will load the value *d'7* to X12 register in the Register module.
 |458 (Hex)|X4|00|X3|X12|
 |10001011000|00100|000000|00011|01100|
 
-Data[8-11] = 'b10001011; 000~00100; 000000~00; 011~01100
+Data[8-11] = 'b10001011; 000~00100~; 000000~00; 011~01100
 
 | Register[location]|  Binary Value	| 
 |:------------------|:----------|
@@ -295,7 +294,7 @@ Data[8-11] = 'b10001011; 000~00100; 000000~00; 011~01100
 |instructionMemoryData[10] | 'b00000000 |
 |instructionMemoryData[11] | 'b01101100 | 
 
-##### LDUR X13, [X1, #48]
+#### LDUR X13, [X1, #48]
 This instruction will load to X13 the value at X1 plus byte offset 48. The X1 register is initialized with the value *64'd16* [*registerData[1] <= 64'd16*]. This will load the value stored in Data memory at register address *(d'16 + d'48) =* **d'64** to register X10. The Data memory holds the value *64'd8* at the 64th register [*memoryData[64] = 64'd8*]:
 
 So this will load the value *64'd8* stored at address #64 in Data memory to X13 register in the Register module.
@@ -317,7 +316,7 @@ Data[12-15] = 'b11111000; 010~00010 ; 1000~00~00; 001~01010
 |instructionMemoryData[14] | 'b00000000| 
 |instructionMemoryData[15] | 'b00101101|
 
-##### ADD X14, X5, X6
+#### ADD X14, X5, X6
 This instruction will load to X14 the value at X5 [*registerData[5] <= 64'd5*] *plus* the value at X6 [*registerData[6] <= 64'd6*]. This will  result in *(d'5 + d'6) = d'11*.
 	 
 		 
@@ -332,7 +331,7 @@ So this will load the value *d'11* to X14 register in the Register module.
 |458 (Hex)|X6|00|X5|X14|
 |10001011000|00110|000000|00101|01110|
 
-Data[16-19] = 'b10001011; 000~00110; 000000~00; 101~01110
+Data[16-19] = 'b10001011; 000~00110~; 000000~00; 101~01110
 
 | Register[location]|  Binary Value	| 
 |:------------------|:----------|
@@ -364,11 +363,12 @@ A summary of expected results:
 
 | Register[location]|  Decimal Value	| 
 |:------------------|:----------|
-|registerData[10] | 64'd7|
-|registerData[11] | 64'd9|
-|registerData[12] | 64'd7|
-|registerData[13] | 64'd8|
-|registerData[14] | 64'd11|
+|registerData[10] | 64'd7 or 7|
+|registerData[11] | 64'd9 or 9|
+|registerData[12] | 64'd7 or 7|
+|registerData[13] | 64'd8 or 8|
+|registerData[14] | 64'd11 or 11|
+
 GTKWave produces the following output.
 
 ![](./readme/Results.png)

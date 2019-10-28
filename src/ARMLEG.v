@@ -92,12 +92,12 @@ module ARMLEG (
 	
 	//IDEX pipeline register
 	output [1:0] IDEX_ALUop; 				// EX Stage
-	output IDEX_ALUsrc; 		    		// EX Stage
+	output IDEX_ALUsrc;		    			// EX Stage
 	output IDEX_isBranch; 					// M Stage
 	output IDEX_MemRead;		  			// M Stage
 	output IDEX_MemWrite; 		  			// M Stage
 	output IDEX_RegWrite;	  				// WB Stage
-	output IDEX_MemToReg;		    		// WB Stage
+	output IDEX_MemToReg;					// WB Stage
 	output [63:0] IDEX_ProgramCounter;
 	output [63:0] IDEX_RegData1;
 	output [63:0] IDEX_RegData2;
