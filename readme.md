@@ -140,29 +140,31 @@ The operation codes determine how the ALU treats the data it receives from the R
 ### Data Memory
 
 
-The Data Memory has been initialized as follows.
+The Data memory unit is a state element with inputs for the address and the write data, and a single output for the read result. There are separate read and write controls, although only one of these may be asserted on any given clock.
 
 | Register[location]|   Value	| 
 | ------------------|:----------|	
-|Data[0]|	64'h0000000000000000|
-|Data[8]|	64'h1111111111111111|
-|Data[16]| 	64'h2222222222222222|
-|Data[24]| 	64'h3333333333333333|
-|Data[32]| 	64'h4444444444444444|
-|Data[40]| 	64'h5555555555555555|
-|Data[48]| 	64'h6666666666666666|
-|Data[56]| 	64'h7777777777777777|
-|Data[64]| 	64'h8888888888888888|
-|Data[72]| 	64'h9999999999999999|
-|Data[80]| 	64'haaaaaaaaaaaaaaaa|
-|Data[88]| 	64'hbbbbbbbbbbbbbbbb|
-|Data[96]| 	64'hcccccccccccccccc|
+|memoryData[0]|	64'd0|
+|memoryData[8]|	64'd1|
+|memoryData[16]| 64'd2|
+|memoryData[24]| 64'd3|
+|memoryData[32]| 64'd4|
+|memoryData[40]| 64'd5|
+|memoryData[48]| 64'd6|
+|memoryData[56]| 64'd7|
+|memoryData[64]| 64'd8|
+|memoryData[72]| 64'd9|
+|memoryData[80]| 64'd10|
+|memoryData[88]| 64'd11|
+|memoryData[96]| 64'd12|
+
 
 ### Sign-extend and Shift Left 2
 
-The Instruction Memory is read in chunks of 32-bits, whereas the CPU instruction is of 64 bits. To rectify this, A Sign Extend unit is added when a B-type instruction needs to be executed. 
+The Instruction Memory is read in chunks of 32-bits, whereas the CPU instruction is of 64 bits. The sign extension unit has the 32-bit instruction as input that selects a 9-bit for *load* and *store* or a 19-bit field for *compare and branch on zero* that
+is sign-extended into a 64-bit result appearing on the output.
 
-To read a 32-bit instruction, 4 Program Counters per instruction are required. Each Program Counter corresponds to each byte being read. The program counter is therefore incremented by 4 at a time. If the bits are shifted to the left by 2, which is similar to multiplying by 4, the program counter required for the instruction to be processed can be obtained.  
+To read a 32-bit instruction, 4 program counters per instruction are required. Each program counter corresponds to each byte being read. The program counter is therefore incremented by 4 at a time. If the bits are shifted to the left by 2, which is similar to multiplying by 4, the program counter required for the instruction to be processed can be obtained.  
 Example: Instruction 4 will start at Program Counter 16.  
 Instruction 4 in binary -> 5'b00100  
 Applying 2 left shifts -> 5'b10000 - (16, which is the program counter required.)
@@ -188,68 +190,200 @@ LEGv8 instructions classically take five steps:
 1. **Instruction Fetch** or *IF* -> Fetch instruction from memory.  
 2. **Instruction Decode** or *ID* -> Read registers and decode the instruction.
 3. **Execute** or *EX* -> Execute the operation or calculate an address. 
-4. **Memory** or *M*-> Access an operand in data memory (if necessary). 
+4. **Memory** or *MEM*-> Access an operand in data memory (if necessary). 
 5. **Write Back** or *WB* -> Write the result into a register (if necessary). 
 
 ![](./readme/pipelinestage.png)
 
 ## Final Overview
-Combining the Pipelined architecture with the Control Unit, gives the complete architecture for this project.
+The Pipelined architecture is combined with the Control Unit to get the complete architecture for this project.
 ![](./readme/PipelineandControl.png)
-#### Load operation :
-LDUR, or Load (unscaled) Register, loads a value from the Data Memory on to the Register Module.
 
-* **LDUR instructions**  
-How LDUR instruction works : 
+## Sample Instructions and Results
+To test the performance and correctness of the pipeline, some instructions are executed on it. The Register module is initialized with some values.
 
-		LDUR X1, [X31, #8]
-This instruction will load to X1 the value pointed by X31 plus 8 bytes. This is called byte offset. The X31 register holds the value *64'h00000000* or *0x00* (See *RegisterFile.v*). This will load the value stored at register address (0x00 + 0x08) in Data memory. The value of X31 will not be modified. The Data memory holds the value *64'h1111111111111111* at the 8th register:
+	  initial begin
+		 registerData[31] <= 64'b0;
+		 registerData[1] <= 64'd16;
+		 registerData[2] <= 64'd12;
+		 registerData[3] <= 64'd3;
+		 registerData[4] <= 64'd4;
+		 registerData[5] <= 64'd5;
+		 registerData[6] <= 64'd6;
+	  end
+	  
 
-		Data[8]  = 64'h1111111111111111;
-So this will load the value *64'h1111111111111111* from register #8 in Data memory to our X1 register in the Register module. 
+The Instruction Memory is initialized with the following instructions:
 
-##### **LDUR X1, [X31, #8]**:
+		LDUR X10, [X1, #40]
+		SUB X11, X2, X3
+		ADD X12, X3, X4
+		LDUR X13, [X1, #48]
+		ADD X14, X5, X6
+
+### Expected Results
+A summary of the instructions is provided with expected results and how the instructions are worked out for the Instruction Memory.
+
+
+##### LDUR X10, [X1, #40]
+This instruction will load to X10 the value at X1 plus byte offset 40. The X1 register is initialized with the value *64'd16* [*registerData[1] <= 64'd16*]. This will load the value stored in Data memory at register address *(d'16 + d'40) =* **d'56** to register X10. The Data memory holds the value *64'd7* at the 56th register [*memoryData[56] = 64'd7*]:
+
+So this will load the value *64'd7* stored at address #56 in Data memory to X10 register in the Register module. 
+
+		registerData[10]  = 64'd7;
 
 | Instruction Opcode|  DT_address	| op | Rn| Rt|
 |:------------------|:----------|:---------------|:---------------|:-----------|
-|7c2 (Hex)|#8|00|X31|X1|
-|11111000010|000001000|00|11111|00001|
+|7c2 (Hex)|#40|00|X1|X10|
+|11111000010|000101000|00|00001|01010|
 
-Data[0-3] = 'b11111000; 010~00000 ; 1000~00~11; 111~00001
 
-| Register[location]|  Binary Value	| Hex Value |
-|:------------------|:----------|:---------------|	
-|Data[0]|	'b11111000|	'hf8		|
-|Data[1]|	'b01000000|	'h40		|
-|Data[2]| 	'b10000011|	'h83		|
-|Data[3]| 	'b11100001|	'he1		|  
+Data[0-3] = 'b11111000; 010~00010 ; 1000~00~00; 001~01010
 
-##### **LDUR X2, [X31, #16]:**
+| Register[location]|  Binary Value	| 
+|:------------------|:----------|
+|instructionMemoryData[0]|	'b11111000|
+|instructionMemoryData[1]|	'b01000010|	
+|instructionMemoryData[2]| 	'b10000000|	
+|instructionMemoryData[3]| 	'b00101010|	 
+
+##### SUB X11, X2, X3
+This instruction will load to X11 the value at X2 [*registerData[2] <= 64'd12*] *minus* the value at X3 [*registerData[3] <= 64'd3*]. This will  result in *(d'12 - d'3) = d'9*. 
+
+So this will load the value *d'9* to X11 register in the Register module. 
+
+		registerData[11]  = 64'd9;
+
+
+| Instruction Opcode|  Rm	| shant | Rn| Rd|
+|:------------------|:----------|:---------------|:---------------|:-----------|
+|658 (Hex)|X3|00|X2|X11|
+|11001011000|00011|000000|00010|01011|
+
+
+Data[4-7] = 'b11001011; 000~00011; 000000~00; 010~01011
+
+
+| Register[location]|  Binary Value	| 
+|:------------------|:----------|
+|instructionMemoryData[4]|	'b11001011|	
+|instructionMemoryData[5]|	'b00000011|	
+|instructionMemoryData[6]| 	'b00000000|	
+|instructionMemoryData[7]| 	'b01001011|	
+
+##### ADD X12, X3, X4
+This instruction will load to X12 the value at X3 [*registerData[3] <= 64'd3*] *plus* the value at X4 [*registerData[4] <= 64'd4*]. This will  result in *(d'3 + d'4) = d'7*.
+	 
+		 
+So this will load the value *d'7* to X12 register in the Register module. 
+
+
+		registerData[12]  = 64'd7;
+
+
+| Instruction Opcode|  Rm	| shant | Rn| Rd|
+|:------------------|:----------|:---------------|:---------------|:-----------|
+|458 (Hex)|X4|00|X3|X12|
+|10001011000|00100|000000|00011|01100|
+
+Data[8-11] = 'b10001011; 000~00100; 000000~00; 011~01100
+
+| Register[location]|  Binary Value	| 
+|:------------------|:----------|
+|instructionMemoryData[8] |'b10001011 |
+|instructionMemoryData[9] | 'b00000100 | 
+|instructionMemoryData[10] | 'b00000000 |
+|instructionMemoryData[11] | 'b01101100 | 
+
+##### LDUR X13, [X1, #48]
+This instruction will load to X13 the value at X1 plus byte offset 48. The X1 register is initialized with the value *64'd16* [*registerData[1] <= 64'd16*]. This will load the value stored in Data memory at register address *(d'16 + d'48) =* **d'64** to register X10. The Data memory holds the value *64'd8* at the 64th register [*memoryData[64] = 64'd8*]:
+
+So this will load the value *64'd8* stored at address #64 in Data memory to X13 register in the Register module.
+
+		registerData[13]  = 64'd8;
 
 | Instruction Opcode|  DT_address	| op | Rn| Rt|
 |:------------------|:----------|:---------------|:---------------|:-----------|
-|7c2 (Hex)|#16|00|X31|X2|
-|11111000010|000010000|00|11111|00010|
-
-  Data[4-7] = 'b11111000; 010~00001; 0000~00~11; 111~00010
-
-| Register[location]|  Binary Value	| Hex Value |
-|:------------------|:----------|:---------------|	
-|Data[4]|	'b11111000|	'hf8		|
-|Data[4]|	'b01000001|	'h40		|
-|Data[6]| 	'b00000011|	'h83		|
-|Data[7]| 	'b11100010|	'he1		|
+|7c2 (Hex)|#48|00|X1|X13|
+|11111000010|000110000|00|00001|01101|
 
 
+Data[12-15] = 'b11111000; 010~00010 ; 1000~00~00; 001~01010
+
+| Register[location]|  Binary Value	| 
+|:------------------|:----------|
+|instructionMemoryData[12] | 'b11111000| 
+|instructionMemoryData[13] | 'b01000011| 
+|instructionMemoryData[14] | 'b00000000| 
+|instructionMemoryData[15] | 'b00101101|
+
+##### ADD X14, X5, X6
+This instruction will load to X14 the value at X5 [*registerData[5] <= 64'd5*] *plus* the value at X6 [*registerData[6] <= 64'd6*]. This will  result in *(d'5 + d'6) = d'11*.
+	 
+		 
+So this will load the value *d'11* to X14 register in the Register module. 
 
 
-# Running :
+		registerData[14]  = 64'd11;
 
-The project was developed on Eclipse Platform using the Sigasi plugin. GTKWave was used to study the wave outputs. Once [iverilog](http://iverilog.icarus.com/) and [gtkwave](http://gtkwave.sourceforge.net/) are installed, run the following commands to execute the simulator and see the wave output file:
+
+| Instruction Opcode|  Rm	| shant | Rn| Rd|
+|:------------------|:----------|:---------------|:---------------|:-----------|
+|458 (Hex)|X6|00|X5|X14|
+|10001011000|00110|000000|00101|01110|
+
+Data[16-19] = 'b10001011; 000~00110; 000000~00; 101~01110
+
+| Register[location]|  Binary Value	| 
+|:------------------|:----------|
+|instructionMemoryData[16] | 'b10001011| 
+|instructionMemoryData[17] | 'b00000110| 
+|instructionMemoryData[18] | 'b00000000| 
+|instructionMemoryData[19] | 'b10101110|
+
+### Instruction Pipeline 
+The instructions should fill the pipeline in stages. The first write back happens in *clock cycle 5* or **CC 5**. So, the first operation should finish its execution in fifth clock cycle and in this case should give the following result for registers Module.   
+
+		writeAddress[4:0] = 10
+		writeData[63:0] = 7
+That is 	***registerData[10]  = 64'd7;***
+
+
+![](./readme/instructioncycle.png)
+
+## Compilation and Elaboration
+
+The project was developed on Eclipse Platform using the Sigasi plugin. GTKWave was used to study the wave outputs. Once [iverilog](http://iverilog.icarus.com/) and [gtkwave](http://gtkwave.sourceforge.net/) are installed, run the following commands for [simulation](https://iverilog.fandom.com/wiki/Simulation) and to see the wave output file.
 
 	iverilog -o ARMLEG ARMLEGvtf.v
 	vvp ARMLEG
 	gtkwave ARMLEGvtf.vcd
+
+## Results
+A summary of expected results:
+
+| Register[location]|  Decimal Value	| 
+|:------------------|:----------|
+|registerData[10] | 64'd7|
+|registerData[11] | 64'd9|
+|registerData[12] | 64'd7|
+|registerData[13] | 64'd8|
+|registerData[14] | 64'd11|
+GTKWave produces the following output.
+
+![](./readme/Results.png)
+
+The first operation finishes execution in the fifth clock cycle as expected. 
+
+![](./readme/resultszoomed.png)
+
+## References
+
++ [**always(*) block**](https://class.ece.uw.edu/371/peckol/doc/Always@.pdf)
++ [**Nets**](https://inst.eecs.berkeley.edu/~cs150/Documents/Nets.pdf)
++ [**Verilog Quick Reference**](https://web.stanford.edu/class/ee183/handouts_win2003/VerilogQuickRef.pdf)
++ [**LEG-v8 Reference Sheet**](http://www.eecs.umich.edu/courses/eecs370/eecs370.f19/resources/materials/ARM-v8-Quick-Reference-Guide.pdf)
++ [**Computer Organization and Design ARM Edition, 1st Edition - David Patterson, John Hennessy**](https://www.elsevier.com/books/computer-organization-and-design-arm-edition/patterson/978-0-12-801733-3)
 
 
 

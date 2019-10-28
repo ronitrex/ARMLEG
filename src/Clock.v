@@ -1,25 +1,25 @@
 `timescale 1ns / 1ps
 
 module Clock(
-  output reg clk
+  output reg CLOCK
 );
 
-	always @(posedge clk)
+	always @(posedge CLOCK)
 	begin
 			#0.03
-			clk <= ~clk;
+			CLOCK <= ~CLOCK;
 	end
 	
-	always @(negedge clk)
+	always @(negedge CLOCK)
 	begin
 			#0.07
-			clk <= ~clk;
+			CLOCK <= ~CLOCK;
 	end
 	
 	initial begin
-	clk <= 1;
-	#10;
-	// Clock terminates after 10ns
+	CLOCK <= 1;
+	#2;
+	// Clock terminates after 2ns
 	$finish;
 	end
 endmodule

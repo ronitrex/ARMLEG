@@ -5,16 +5,14 @@
 
 module ARMLEGvtf;
     wire CLOCK;
-    reg RESET;
-    
+    reg RESET;   
 
     Clock clock(CLOCK);
 
     ARMLEG ARMLEGv8(CLOCK, RESET);
 
-
     always @ ( RESET ) begin
-      #1;
+      #0.01;
       RESET = ~RESET;
     end
 
@@ -22,9 +20,8 @@ module ARMLEGvtf;
     begin
 	$dumpfile("ARMLEGvtf.vcd");
     $dumpvars(0,ARMLEGvtf);
-        #5
+        #1.05;
         RESET = 1;
-        #5;
-        // $finish;
+
     end
 endmodule

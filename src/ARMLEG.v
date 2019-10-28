@@ -26,7 +26,7 @@ module ARMLEG (
 	output [4:0] MEMWBwriteAddress;
 	output MEMWBregWrite;
 	
-	output [63:0] adder_out;
+	output [63:0] adderResult;
 	
 	output [31:0] CPUInstruction;
 	
@@ -46,7 +46,7 @@ module ARMLEG (
 	  
 	output [63:0] signExtendedResult;
 	
-	output [3:0] ALU_operation;
+	output [3:0] ALUoperation;
 	  
 	output [63:0] ALUmux;  
 	
@@ -59,7 +59,7 @@ module ARMLEG (
 	
 	output [63:0] readData;
 	
-	output [63:0] dataMemMUXresult;
+	output [63:0] dataMemoryMUXresult;
 	
 	output [63:0] programCounter_in;
 	output [63:0] programCounter_out;
@@ -70,9 +70,9 @@ module ARMLEG (
 	
 	ProgramCounter programCounter (CLOCK, RESET, programCounter_in, programCounter_out);
 	
-	Adder fourAdder (64'b0100, programCounter_out, adder_out);
+	Adder fourAdder (64'b0100, programCounter_out, adderResult);
 	
-	ProgramCounterMUX programCounterMUX(adder_out, EXMEM_shiftedprogramCounter_out, (EXMEM_isBranch&EXMEM_ALUzero), programCounter_in);
+	ProgramCounterMUX programCounterMUX(adderResult, EXMEM_shiftedprogramCounter_out, (EXMEM_isBranch&EXMEM_ALUzero), programCounter_in);
 	
 	InstructionMemory instructionMemory(programCounter_out, CPUInstruction);
 	
@@ -86,18 +86,18 @@ module ARMLEG (
 	
 	RegisterMux registerMUX(IFID_CPUInstruction[20:16], IFID_CPUInstruction[4:0], reg2Loc, regMUX);
 	
-	RegisterModule registerModule(IFID_CPUInstruction[9:5], regMUX, MEMWBwriteAddress, dataMemMUXresult, MEMWBregWrite, regData1, regData2);
+	RegisterModule registerModule(IFID_CPUInstruction[9:5], regMUX, MEMWBwriteAddress, dataMemoryMUXresult, MEMWBregWrite, regData1, regData2);
 	
 	SignExtend signExtend(IFID_CPUInstruction, signExtendedResult);
 	
 	//IDEX pipeline register
-	output [1:0] IDEX_ALUop; 	// EX Stage
-	output IDEX_ALUsrc; 		    // EX Stage
-	output IDEX_isBranch; 	// M Stage
-	output IDEX_MemRead;		  // M Stage
-	output IDEX_MemWrite; 		  // M Stage
-	output IDEX_RegWrite;	  // WB Stage
-	output IDEX_MemToReg;		    // WB Stage
+	output [1:0] IDEX_ALUop; 				// EX Stage
+	output IDEX_ALUsrc; 		    		// EX Stage
+	output IDEX_isBranch; 					// M Stage
+	output IDEX_MemRead;		  			// M Stage
+	output IDEX_MemWrite; 		  			// M Stage
+	output IDEX_RegWrite;	  				// WB Stage
+	output IDEX_MemToReg;		    		// WB Stage
 	output [63:0] IDEX_ProgramCounter;
 	output [63:0] IDEX_RegData1;
 	output [63:0] IDEX_RegData2;
@@ -107,21 +107,21 @@ module ARMLEG (
 	
 	IDEX IDEX(CLOCK, ALUop, ALUsrc, branch, memRead, memWrite, regWrite, memToReg, IFID_ProgramCounter, regData1, regData2, signExtendedResult, IFID_CPUInstruction[31:21], IFID_CPUInstruction[4:0], IDEX_ALUop, IDEX_ALUsrc, IDEX_isBranch, IDEX_MemRead, IDEX_MemWrite, IDEX_RegWrite, IDEX_MemToReg, IDEX_ProgramCounter, IDEX_RegData1, IDEX_RegData2, IDEX_SignExtend, IDEX_ALUcontrol, IDEX_WriteReg);
 	
-	ALUControl ALUcontrol(IDEX_ALUop, IDEX_ALUcontrol, ALU_operation);
+	ALUControl ALUcontrol(IDEX_ALUop, IDEX_ALUcontrol, ALUoperation);
 	
 	ALUMux ALUMUX(IDEX_RegData2, IDEX_SignExtend, IDEX_ALUsrc, ALUmux);
 	
-	ALU ALU(IDEX_RegData1, ALUmux, ALU_operation, ALUresult, zeroFlag);
+	ALU ALU(IDEX_RegData1, ALUmux, ALUoperation, ALUresult, zeroFlag);
 	
 	ShiftLeft2 shiftLeft2(IDEX_SignExtend, shiftedResult);
 	
 	Adder branchAdder(IDEX_ProgramCounter, shiftedResult,  branchAddress);
 	
 	//EXMEM pipeline register
-	output EXMEM_MemRead; 		// M Stage
-	output EXMEM_MemWrite; 		// M Stage
-	output EXMEM_RegWrite;		// WB Stage
-	output EXMEM_MemToReg;		// WB Stage
+	output EXMEM_MemRead; 				// M Stage
+	output EXMEM_MemWrite; 				// M Stage
+	output EXMEM_RegWrite;				// WB Stage
+	output EXMEM_MemToReg;				// WB Stage
 	output [63:0] EXMEM_InputAddress;
 	output [63:0] EXMEM_InputData;				
 	output [4:0] EXMEM_WriteReg;
@@ -131,13 +131,13 @@ module ARMLEG (
 	DataMemory dataMemory(EXMEM_InputAddress, EXMEM_InputData, EXMEM_MemRead, EXMEM_MemWrite, readData);
 	
 	//MEMWB Pipeline Register
-	output [63:0] MEMWB_address;
-	output [63:0] MEMWB_readData;
-	output MEMWB_mem2reg;
+	output [63:0] MEMWB_Address;
+	output [63:0] MEMWB_ReadData;
+	output MEMWB_MemToReg;
 	
-	MEMWB MEMWB(CLOCK, EXMEM_InputAddress, readData, EXMEM_WriteReg, EXMEM_RegWrite, EXMEM_MemToReg, MEMWB_address, MEMWB_readData, MEMWBwriteAddress, MEMWBregWrite, MEMWB_mem2reg);
+	MEMWB MEMWB(CLOCK, EXMEM_InputAddress, readData, EXMEM_WriteReg, EXMEM_RegWrite, EXMEM_MemToReg, MEMWB_Address, MEMWB_ReadData, MEMWBwriteAddress, MEMWBregWrite, MEMWB_MemToReg);
 	
-	DataMemoryMUX dataMemoryMUX(MEMWB_readData, MEMWB_address, MEMWB_mem2reg, dataMemMUXresult);
+	DataMemoryMUX dataMemoryMUX(MEMWB_ReadData, MEMWB_Address, MEMWB_MemToReg, dataMemoryMUXresult);
 
 endmodule
 

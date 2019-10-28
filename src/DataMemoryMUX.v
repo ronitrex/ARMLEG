@@ -3,13 +3,13 @@ module DataMemoryMUX
   input [63:0] readData,
   input [63:0] ALUresult,
   input memToReg,
-  output reg [63:0] out
+  output reg [63:0] dataMemoryMUXout
 );
 
   always @(*) case (memToReg)
-  0: out = ALUresult;
-  1: out = readData;
-  default: out = ALUresult;
+  0: dataMemoryMUXout = ALUresult;
+  1: dataMemoryMUXout = readData;
+  default: dataMemoryMUXout = ALUresult;
   endcase
 
 endmodule

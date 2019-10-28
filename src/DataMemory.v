@@ -7,33 +7,33 @@ module DataMemory
   output reg [63:0] outputData
 );
 
-  reg [63:0] Data[127:0];
+  reg [63:0] memoryData[127:0];
 
   initial begin
 
-   Data[0]  = 64'h0000000000000000;
-   Data[8]  = 64'h1111111111111111;
-   Data[16] = 64'h2222222222222222;
-   Data[24] = 64'h3333333333333333;
-   Data[32] = 64'h4444444444444444;
-   Data[40] = 64'h5555555555555555;
-   Data[48] = 64'h6666666666666666;
-   Data[56] = 64'h7777777777777777;
-   Data[64] = 64'h8888888888888888;
-   Data[72] = 64'h9999999999999999;
-   Data[80] = 64'haaaaaaaaaaaaaaaa;
-   Data[88] = 64'hbbbbbbbbbbbbbbbb;
-   Data[96] = 64'hcccccccccccccccc;
+   memoryData[0]  = 64'd0;
+   memoryData[8]  = 64'd1;
+   memoryData[16] = 64'd2;
+   memoryData[24] = 64'd3;
+   memoryData[32] = 64'd4;
+   memoryData[40] = 64'd5;
+   memoryData[48] = 64'd6;
+   memoryData[56] = 64'd7;
+   memoryData[64] = 64'd8;
+   memoryData[72] = 64'd9;
+   memoryData[80] = 64'd10;
+   memoryData[88] = 64'd11;
+   memoryData[96] = 64'd12;
    
   end
 
     always @(*) begin
       if (memWrite == 1) begin
-        Data[inputAddress] = inputData;
+        memoryData[inputAddress] = inputData;
       end
 
       if (memRead == 1) begin
-        outputData = Data[inputAddress];
+        outputData = memoryData[inputAddress];
       end
     end
 endmodule
