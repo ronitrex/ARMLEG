@@ -199,7 +199,7 @@ LEGv8 instructions classically take five steps:
 The Pipelined architecture is combined with the Control Unit to get the complete architecture for this project.
 ![](./readme/PipelineandControl.png)
 
-## Sample Instructions and Results
+## Testing with Instructions
 To test the performance and correctness of the pipeline, some instructions are executed on it. The Register module is initialized with some values.
 
 	  initial begin
@@ -220,11 +220,11 @@ The Instruction Memory is initialized with the following instructions:
 		LDUR X13, [X1, #48]
 		ADD X14, X5, X6
 
-### Expected Results
+## Expected Results
 A summary of the instructions is provided with expected results and how the instructions are worked out for the Instruction Memory.
 
 
-#### LDUR X10, [X1, #40]
+### LDUR X10, [X1, #40]
 This instruction will load to X10 the value at X1 plus byte offset 40. The X1 register is initialized with the value *64'd16* [*registerData[1] <= 64'd16*]. This will load the value stored in Data memory at register address *(d'16 + d'40) =* **d'56** to register X10. The Data memory holds the value *64'd7* at the 56th register [*memoryData[56] = 64'd7*]:
 
 So this will load the value *64'd7* stored at address #56 in Data memory to X10 register in the Register module. 
@@ -246,7 +246,7 @@ Data[0-3] = 'b11111000; 010~00010 ; 1000~00~00; 001~01010
 |instructionMemoryData[2]| 	'b10000000|	
 |instructionMemoryData[3]| 	'b00101010|	 
 
-#### SUB X11, X2, X3
+### SUB X11, X2, X3
 This instruction will load to X11 the value at X2 [*registerData[2] <= 64'd12*] *minus* the value at X3 [*registerData[3] <= 64'd3*]. This will  result in *(d'12 - d'3) = d'9*. 
 
 So this will load the value *d'9* to X11 register in the Register module. 
@@ -270,7 +270,7 @@ Data[4-7] = 'b11001011; 000~00011~; 000000~00; 010~01011
 |instructionMemoryData[6]| 	'b00000000|	
 |instructionMemoryData[7]| 	'b01001011|	
 
-#### ADD X12, X3, X4
+### ADD X12, X3, X4
 This instruction will load to X12 the value at X3 [*registerData[3] <= 64'd3*] *plus* the value at X4 [*registerData[4] <= 64'd4*]. This will  result in *(d'3 + d'4) = d'7*.
 	 
 		 
@@ -294,7 +294,7 @@ Data[8-11] = 'b10001011; 000~00100~; 000000~00; 011~01100
 |instructionMemoryData[10] | 'b00000000 |
 |instructionMemoryData[11] | 'b01101100 | 
 
-#### LDUR X13, [X1, #48]
+### LDUR X13, [X1, #48]
 This instruction will load to X13 the value at X1 plus byte offset 48. The X1 register is initialized with the value *64'd16* [*registerData[1] <= 64'd16*]. This will load the value stored in Data memory at register address *(d'16 + d'48) =* **d'64** to register X10. The Data memory holds the value *64'd8* at the 64th register [*memoryData[64] = 64'd8*]:
 
 So this will load the value *64'd8* stored at address #64 in Data memory to X13 register in the Register module.
@@ -316,7 +316,7 @@ Data[12-15] = 'b11111000; 010~00010 ; 1000~00~00; 001~01010
 |instructionMemoryData[14] | 'b00000000| 
 |instructionMemoryData[15] | 'b00101101|
 
-#### ADD X14, X5, X6
+### ADD X14, X5, X6
 This instruction will load to X14 the value at X5 [*registerData[5] <= 64'd5*] *plus* the value at X6 [*registerData[6] <= 64'd6*]. This will  result in *(d'5 + d'6) = d'11*.
 	 
 		 
@@ -340,7 +340,7 @@ Data[16-19] = 'b10001011; 000~00110~; 000000~00; 101~01110
 |instructionMemoryData[18] | 'b00000000| 
 |instructionMemoryData[19] | 'b10101110|
 
-### Instruction Pipeline 
+## Instruction Pipeline 
 The instructions should fill the pipeline in stages. The first write back happens in *clock cycle 5* or **CC 5**. So, the first operation should finish its execution in fifth clock cycle and in this case should give the following result for registers Module.   
 
 		writeAddress[4:0] = 10
@@ -378,6 +378,7 @@ The first operation finishes execution in the fifth clock cycle as expected.
 ![](./readme/resultszoomed.png)
 
 ## References
+A list of references and study material used for this project:
 
 + [**always(*) block**](https://class.ece.uw.edu/371/peckol/doc/Always@.pdf)
 + [**Nets**](https://inst.eecs.berkeley.edu/~cs150/Documents/Nets.pdf)
