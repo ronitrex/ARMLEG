@@ -190,7 +190,7 @@ LEGv8 instructions classically take five steps:
 1. **Instruction Fetch** or *IF* -> Fetch instruction from memory.  
 2. **Instruction Decode** or *ID* -> Read registers and decode the instruction.
 3. **Execute** or *EX* -> Execute the operation or calculate an address. 
-4. **Memory** or *MEM*-> Access an operand in data memory (if necessary). 
+4. **Memory** or *MEM* -> Access an operand in data memory (if necessary). 
 5. **Write Back** or *WB* -> Write the result into a register (if necessary). 
 
 ![](./readme/pipelinestage.png)

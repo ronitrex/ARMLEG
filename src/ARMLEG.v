@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+
 `include "ProgramCounter.v"
 `include "ProgramCounterMUX.v"
 `include "Adder.v"
@@ -24,12 +25,9 @@ module ARMLEG (
 );
 
 	output [4:0] MEMWBwriteAddress;
-	output MEMWBregWrite;
-	
+	output MEMWBregWrite;	
 	output [63:0] adderResult;
-	
-	output [31:0] CPUInstruction;
-	
+	output [31:0] CPUInstruction;	
 	output reg2Loc;
 	output ALUsrc;
 	output memToReg;
@@ -38,32 +36,20 @@ module ARMLEG (
 	output memWrite;
 	output branch;
 	output [1:0] ALUop;
-	
-	output [4:0] regMUX;
-	
+	output [4:0] regMUX;	
 	output [63:0] regData1;
-	output [63:0] regData2;
-	  
-	output [63:0] signExtendedResult;
-	
-	output [3:0] ALUoperation;
-	  
-	output [63:0] ALUmux;  
-	
+	output [63:0] regData2;	  
+	output [63:0] signExtendedResult;	
+	output [3:0] ALUoperation;	  
+	output [63:0] ALUmux;  	
 	output [63:0] ALUresult;
-	output zeroFlag;
-	
+	output zeroFlag;	
 	output [63:0] shiftedResult;
-	
-	output [63:0] branchAddress; 
-	
-	output [63:0] readData;
-	
-	output [63:0] dataMemoryMUXresult;
-	
+	output [63:0] branchAddress; 	
+	output [63:0] readData;	
+	output [63:0] dataMemoryMUXresult;	
 	output [63:0] programCounter_in;
-	output [63:0] programCounter_out;
-	
+	output [63:0] programCounter_out;	
 	output [63:0] EXMEM_shiftedprogramCounter_out;			// Program Counter Mux
 	output EXMEM_ALUzero;									// Program Counter Mux
 	output EXMEM_isBranch; 					// M Stage		// Program Counter Mux
@@ -80,13 +66,13 @@ module ARMLEG (
 	output [63:0] IFID_ProgramCounter;
 	output [31:0] IFID_CPUInstruction;
 	
-	ControlUnit controlUnit(CLOCK, CPUInstruction[31:21], reg2Loc, ALUsrc, memToReg, regWrite, memRead, memWrite, branch, ALUop);
-	
 	IFID IFID (CLOCK, programCounter_out, CPUInstruction, IFID_ProgramCounter, IFID_CPUInstruction);
+	
+	ControlUnit controlUnit(IFID_CPUInstruction[31:21], reg2Loc, ALUsrc, memToReg, regWrite, memRead, memWrite, branch, ALUop);
 	
 	RegisterMux registerMUX(IFID_CPUInstruction[20:16], IFID_CPUInstruction[4:0], reg2Loc, regMUX);
 	
-	RegisterModule registerModule(IFID_CPUInstruction[9:5], regMUX, MEMWBwriteAddress, dataMemoryMUXresult, MEMWBregWrite, regData1, regData2);
+	RegisterModule registerModule(CLOCK, IFID_CPUInstruction[9:5], regMUX, MEMWBwriteAddress, dataMemoryMUXresult, MEMWBregWrite, regData1, regData2);
 	
 	SignExtend signExtend(IFID_CPUInstruction, signExtendedResult);
 	
@@ -128,7 +114,7 @@ module ARMLEG (
 	
 	EXMEM EXMEM(CLOCK, IDEX_isBranch, IDEX_MemRead, IDEX_MemWrite, IDEX_RegWrite, IDEX_MemToReg, branchAddress, zeroFlag, ALUresult, IDEX_RegData2, IDEX_WriteReg, EXMEM_isBranch, EXMEM_MemRead, EXMEM_MemWrite, EXMEM_RegWrite, EXMEM_MemToReg, EXMEM_shiftedprogramCounter_out, EXMEM_ALUzero, EXMEM_InputAddress, EXMEM_InputData, EXMEM_WriteReg);
 	
-	DataMemory dataMemory(EXMEM_InputAddress, EXMEM_InputData, EXMEM_MemRead, EXMEM_MemWrite, readData);
+	DataMemory dataMemory(CLOCK, EXMEM_InputAddress, EXMEM_InputData, EXMEM_MemRead, EXMEM_MemWrite, readData);
 	
 	//MEMWB Pipeline Register
 	output [63:0] MEMWB_Address;
@@ -138,7 +124,7 @@ module ARMLEG (
 	MEMWB MEMWB(CLOCK, EXMEM_InputAddress, readData, EXMEM_WriteReg, EXMEM_RegWrite, EXMEM_MemToReg, MEMWB_Address, MEMWB_ReadData, MEMWBwriteAddress, MEMWBregWrite, MEMWB_MemToReg);
 	
 	DataMemoryMUX dataMemoryMUX(MEMWB_ReadData, MEMWB_Address, MEMWB_MemToReg, dataMemoryMUXresult);
-
+	
 endmodule
 
 

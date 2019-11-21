@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
+
 `include "ARMLEG.v"
 `include "Clock.v"
-
 
 module ARMLEGvtf;
     wire CLOCK;
@@ -20,8 +20,8 @@ module ARMLEGvtf;
     begin
 	$dumpfile("ARMLEGvtf.vcd");
     $dumpvars(0,ARMLEGvtf);
-        #1.05;
-        RESET = 1;
-
-    end
+    
+    #1.05;
+    RESET = 1;
+	end
 endmodule

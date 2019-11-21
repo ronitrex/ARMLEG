@@ -1,5 +1,8 @@
+`timescale 1ns / 1ps
+
 module DataMemory
 (
+  input CLOCK,	
   input [63:0] inputAddress,
   input [63:0] inputData,
   input memRead,
@@ -27,13 +30,15 @@ module DataMemory
    
   end
 
-    always @(*) begin
+    always @(posedge CLOCK) begin
       if (memWrite == 1) begin
-        memoryData[inputAddress] = inputData;
+        memoryData[inputAddress] <= inputData;
       end
-
+    end
+      
+    always @(negedge CLOCK) begin
       if (memRead == 1) begin
-        outputData = memoryData[inputAddress];
+        outputData <= memoryData[inputAddress];
       end
     end
 endmodule

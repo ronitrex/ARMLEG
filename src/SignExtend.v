@@ -5,7 +5,6 @@ module SignExtend
 );
 
     always @(*) begin
-
       if (inputInstruction[31:26] == 6'b000101) begin // B
         signExtendedInstruction[25:0] = inputInstruction[25:0];
         signExtendedInstruction[63:26] = {64{signExtendedInstruction[25]}};
