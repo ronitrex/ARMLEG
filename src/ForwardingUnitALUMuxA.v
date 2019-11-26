@@ -8,9 +8,9 @@ module ForwardingUnitALUMuxA
 );
 
 	always @(*) case (ForwardA)
-		00: ForwardingUnitALUMUXoutA = regData1;
-		01: ForwardingUnitALUMUXoutA = dataMemoryMUXout;
-		10: ForwardingUnitALUMUXoutA = EXMEM_InputAddress;
+		2'b00: ForwardingUnitALUMUXoutA = regData1;
+		2'b01: ForwardingUnitALUMUXoutA = dataMemoryMUXout;
+		2'b10: ForwardingUnitALUMUXoutA = EXMEM_InputAddress;
 		default: ForwardingUnitALUMUXoutA = regData1;
 	endcase
 

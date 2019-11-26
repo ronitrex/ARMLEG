@@ -113,6 +113,16 @@ module ARMLEG (
 	// IFID_CPUInstruction[4:0] = RegisterRd or WriteReg or WriteAddress
 	HazardDetectionUnit hazardDetectionUnit(IDEX_MemRead, IDEX_WriteReg, IFID_CPUInstruction[20:16], IFID_CPUInstruction[9:5], IFID_Write, PCWire, ControlWire);
 	
+	// Forwarding unit
+	// IFID_CPUInstruction[20:16] = RegisterRm
+	// IFID_CPUInstruction[9:5] = RegisterRn
+	// IFID_CPUInstruction[4:0] = RegisterRd or WriteReg or WriteAddress
+	ForwardingUnit forwardingUnit(IDEX_RegisterRm, IDEX_RegisterRn, EXMEM_WriteReg, MEMWB_WriteAddress, EXMEM_RegWrite, MEMWB_RegWrite, ForwardA, ForwardB);
+
+    // Forwarding unit multiplexers
+    ForwardingUnitALUMuxA forwardingUnitALUMuxA(IDEX_RegData1, dataMemoryMUXresult, EXMEM_InputAddress, ForwardA, ForwardingUnitALUMUXoutA);
+    ForwardingUnitALUMuxB forwardingUnitALUMuxB(IDEX_RegData2, dataMemoryMUXresult, EXMEM_InputAddress, ForwardB, ForwardingUnitALUMUXoutB);
+    
 	ProgramCounter programCounter (CLOCK, RESET, PCWire, programCounter_in, programCounter_out);
 
 	Adder fourAdder (64'b0100, programCounter_out, adderResult);
@@ -138,11 +148,7 @@ module ARMLEG (
 	IDEX IDEX(CLOCK, ALUop, ALUsrc, branch, memRead, memWrite, regWrite, memToReg, IFID_ProgramCounter, regData1, regData2, signExtendedResult, IFID_CPUInstruction[31:21], IFID_CPUInstruction[20:16], IFID_CPUInstruction[9:5], IFID_CPUInstruction[4:0],
 		IDEX_ALUop, IDEX_ALUsrc, IDEX_isBranch, IDEX_MemRead, IDEX_MemWrite, IDEX_RegWrite, IDEX_MemToReg, IDEX_ProgramCounter, IDEX_RegData1, IDEX_RegData2, IDEX_SignExtend, IDEX_ALUcontrol, IDEX_RegisterRm, IDEX_RegisterRn, IDEX_WriteReg
 	);
-
-    // Forwarding unit multiplexers
-    ForwardingUnitALUMuxA forwardingUnitALUMuxA(IDEX_RegData1, dataMemoryMUXresult, EXMEM_InputAddress, ForwardA, ForwardingUnitALUMUXoutA);
-    ForwardingUnitALUMuxB forwardingUnitALUMuxB(IDEX_RegData2, dataMemoryMUXresult, EXMEM_InputAddress, ForwardB, ForwardingUnitALUMUXoutB);
-    
+	
 	ALUControl ALUcontrol(IDEX_ALUop, IDEX_ALUcontrol, ALUoperation);
 
 	ALUMux ALUMUX(ForwardingUnitALUMUXoutB, IDEX_SignExtend, IDEX_ALUsrc, ALUmux);
@@ -152,12 +158,6 @@ module ARMLEG (
 	ShiftLeft2 shiftLeft2(IDEX_SignExtend, shiftedResult);
 
 	Adder branchAdder(IDEX_ProgramCounter, shiftedResult,  branchAddress);
-
-	// Forwarding unit
-	// IFID_CPUInstruction[20:16] = RegisterRm
-	// IFID_CPUInstruction[9:5] = RegisterRn
-	// IFID_CPUInstruction[4:0] = RegisterRd or WriteReg or WriteAddress
-	ForwardingUnit forwardingUnit(IDEX_RegisterRn, IDEX_RegisterRm, EXMEM_WriteReg, MEMWB_WriteAddress, EXMEM_RegWrite, MEMWB_RegWrite, ForwardA, ForwardB);
 
 	// EXMEM stage
 	EXMEM EXMEM(CLOCK, IDEX_isBranch, IDEX_MemRead, IDEX_MemWrite, IDEX_RegWrite, IDEX_MemToReg, branchAddress, zeroFlag, ALUresult, IDEX_RegData2, IDEX_WriteReg,

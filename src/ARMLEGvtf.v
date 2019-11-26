@@ -20,7 +20,7 @@ module ARMLEGvtf;
 	begin
 		$dumpfile("ARMLEGvtf.vcd");
 		$dumpvars(0,ARMLEGvtf);
-		#1.05;
+		#2;
 		RESET = 1;
 	end
 endmodule

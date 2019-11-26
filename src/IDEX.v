@@ -58,5 +58,7 @@ module IDEX
 		signExtend_out <= signExtend_in;
 		ALUcontrol_out <= ALUcontrol_in;
 		writeReg_out <= writeReg_in;
+		registerRm_out <= registerRm_in;
+	    registerRn_out <= registerRn_in;
 	end
 endmodule
