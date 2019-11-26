@@ -22,6 +22,7 @@ module RegisterModule
 		registerData[4] = 64'd4;
 		registerData[5] = 64'd5;
 		registerData[6] = 64'd6;
+		registerData[7] = 64'd1;
 	end
 
 	always @(*) begin
