@@ -20,6 +20,9 @@
 `include "MEMWB.v"
 `include "ForwardingUnit.v"
 `include "HazardDetectionUnit.v"
+`include "ForwardingUnitALUMuxA.v"
+`include "ForwardingUnitALUMuxB.v"
+
 
 module ARMLEG (
 	input CLOCK,
@@ -95,6 +98,8 @@ module ARMLEG (
 	// Forwarding Unit
 	output [1:0] ForwardA;
 	output [1:0] ForwardB;
+	output [63:0] ForwardingUnitALUMUXoutA;
+	output [63:0] ForwardingUnitALUMUXoutB;
 	
 	// Hazard Detection unit
 	output IFID_Write;
@@ -105,7 +110,7 @@ module ARMLEG (
 	// IFID_CPUInstruction[31:21] = Opcode
 	// IFID_CPUInstruction[20:16] = RegisterRm
 	// IFID_CPUInstruction[9:5] = RegisterRn
-	// IFID_CPUInstruction[4:0] = RegisterRd or WriteReg
+	// IFID_CPUInstruction[4:0] = RegisterRd or WriteReg or WriteAddress
 	HazardDetectionUnit hazardDetectionUnit(IDEX_MemRead, IDEX_WriteReg, IFID_CPUInstruction[20:16], IFID_CPUInstruction[9:5], IFID_Write, PCWire, ControlWire);
 	
 	ProgramCounter programCounter (CLOCK, RESET, PCWire, programCounter_in, programCounter_out);
@@ -117,11 +122,11 @@ module ARMLEG (
 	InstructionMemory instructionMemory(programCounter_out, CPUInstruction);
 
 	// IFID stage
-	IFID IFID (CLOCK, programCounter_out, CPUInstruction,
+	IFID IFID (CLOCK, IFID_Write, programCounter_out, CPUInstruction,
 		IFID_ProgramCounter, IFID_CPUInstruction
 	);
 		
-	ControlUnit controlUnit(IFID_CPUInstruction[31:21], reg2Loc, ALUsrc, memToReg, regWrite, memRead, memWrite, branch, ALUop);
+	ControlUnit controlUnit(ControlWire, IFID_CPUInstruction[31:21], reg2Loc, ALUsrc, memToReg, regWrite, memRead, memWrite, branch, ALUop);
 
 	RegisterMux registerMUX(IFID_CPUInstruction[20:16], IFID_CPUInstruction[4:0], reg2Loc, regMUX);
 
@@ -134,11 +139,15 @@ module ARMLEG (
 		IDEX_ALUop, IDEX_ALUsrc, IDEX_isBranch, IDEX_MemRead, IDEX_MemWrite, IDEX_RegWrite, IDEX_MemToReg, IDEX_ProgramCounter, IDEX_RegData1, IDEX_RegData2, IDEX_SignExtend, IDEX_ALUcontrol, IDEX_RegisterRm, IDEX_RegisterRn, IDEX_WriteReg
 	);
 
+    // Forwarding unit multiplexers
+    ForwardingUnitALUMuxA forwardingUnitALUMuxA(IDEX_RegData1, dataMemoryMUXresult, EXMEM_InputAddress, ForwardA, ForwardingUnitALUMUXoutA);
+    ForwardingUnitALUMuxB forwardingUnitALUMuxB(IDEX_RegData2, dataMemoryMUXresult, EXMEM_InputAddress, ForwardB, ForwardingUnitALUMUXoutB);
+    
 	ALUControl ALUcontrol(IDEX_ALUop, IDEX_ALUcontrol, ALUoperation);
 
-	ALUMux ALUMUX(IDEX_RegData2, IDEX_SignExtend, IDEX_ALUsrc, ALUmux);
+	ALUMux ALUMUX(ForwardingUnitALUMUXoutB, IDEX_SignExtend, IDEX_ALUsrc, ALUmux);
 
-	ALU ALU(IDEX_RegData1, ALUmux, ALUoperation, ALUresult, zeroFlag);
+	ALU ALU(ForwardingUnitALUMUXoutA, ALUmux, ALUoperation, ALUresult, zeroFlag);
 
 	ShiftLeft2 shiftLeft2(IDEX_SignExtend, shiftedResult);
 
@@ -147,7 +156,7 @@ module ARMLEG (
 	// Forwarding unit
 	// IFID_CPUInstruction[20:16] = RegisterRm
 	// IFID_CPUInstruction[9:5] = RegisterRn
-	// IFID_CPUInstruction[4:0] = RegisterRd or WriteReg
+	// IFID_CPUInstruction[4:0] = RegisterRd or WriteReg or WriteAddress
 	ForwardingUnit forwardingUnit(IDEX_RegisterRn, IDEX_RegisterRm, EXMEM_WriteReg, MEMWB_WriteAddress, EXMEM_RegWrite, MEMWB_RegWrite, ForwardA, ForwardB);
 
 	// EXMEM stage

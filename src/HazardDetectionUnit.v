@@ -14,7 +14,7 @@ module HazardDetectionUnit
 		ControlWire = 1'b1;
 	end
 
-	always@(*) begin
+	always @(*) begin
 		if ((IDEX_MemRead) && ((IDEX_RegisterRd == IFID_RegisterRn) || (IDEX_RegisterRd == IFID_RegisterRm))) begin
 			IFID_Write = 1'b0;
 			PCWire = 1'b0;

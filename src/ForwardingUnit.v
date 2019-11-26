@@ -10,7 +10,7 @@ module ForwardingUnit
 	output reg [1:0] ForwardB
 );
 
-	always@(*) begin
+	always @(*) begin
 
 		//EX hazard:
 		if ((EXMEM_RegWrite) && (EXMEM_RegisterRd != 31) && (EXMEM_RegisterRd == IDEX_RegisterRn)) begin

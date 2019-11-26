@@ -3,6 +3,7 @@
 module IFID
 (
 	input CLOCK,
+	input IFID_Write,
 	input [63:0] programCounter_in,
 	input [31:0] CPUInstruction_in,
 	output reg [63:0] programCounter_out,
@@ -10,7 +11,9 @@ module IFID
 );
 
 	always @(posedge CLOCK) begin
-		programCounter_out <= programCounter_in;
-		CPUInstruction_out <= CPUInstruction_in;
+		if(IFID_Write) begin
+			programCounter_out <= programCounter_in;
+			CPUInstruction_out <= CPUInstruction_in;
+		end
 	end
 endmodule
