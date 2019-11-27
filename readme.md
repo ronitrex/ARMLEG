@@ -499,7 +499,7 @@ That is 	***registerData[10]  = 64'd7;***
 ![](./readme/hazardingexample.png) 
 ## Compilation and Elaboration
 
-The project was developed on Eclipse Platform using the Sigasi plugin. GTKWave was used to study the wave outputs. Once [iverilog](https://iverilog.icarus.com/) and [gtkwave](https://gtkwave.sourceforge.net/) are installed, run the following commands for [simulation](https://iverilog.fandom.com/wiki/Simulation) in the src![src](./readme/hazardingexample.pn)  directory. Use GTKwave and to see the wave output file.
+The project was developed on Eclipse Platform using the Sigasi plugin. GTKWave was used to study the wave outputs. Once [iverilog](https://iverilog.icarus.com/) and [gtkwave](https://gtkwave.sourceforge.net/) are installed, run the following commands for [simulation](https://iverilog.fandom.com/wiki/Simulation) in the [src](./src)  directory. Use **GTKWave** and to see the wave output file.
 
 	iverilog -o ARMLEG ARMLEGvtf.v
 	vvp ARMLEG
