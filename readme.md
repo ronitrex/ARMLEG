@@ -522,11 +522,14 @@ GTKWave produces the following output.
 
 ![](./readme/Res.png)
 
+The results can be verified from the values seen for writeAddress and writeData
+
+![](./readme/ResZZ.png)
+
 The operation signals and other units can be viewed in detail 
 
 ![](./readme/ResZ.png)
 
-![](./readme/ResZ.png)
 
 ## References
 A list of references and study material used for this project:
