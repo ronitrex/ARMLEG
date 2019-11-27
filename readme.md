@@ -1,16 +1,16 @@
 # Pipelined ARM-LEGv8 CPU with Forwarding and Hazard Detection
 
 ## Table of contents
-+ [Introduction](#introduction)
-+ [Architecture](#Architecture)
-+ [Pipelining with Forwarding and Hazard Detection Unit](#pipelining-with-forwarding-and-hazard-detection-unit)
-+ [Final Overview](#final-overview)
-+ [Testing with Instructions](#testing-with-instructions)
-+ [Expected Results](#expected-results)
-+ [Instruction Pipeline](#instruction-pipeline)
-+ [Compilation and Elaboration](#compilation-and-elaboration)
-+ [Results](#results)
-+ [References](#references)
++ [**Introduction**](#introduction)
++ [**Architecture**](#Architecture)
++ [**Pipelining with Forwarding and Hazard Detection Unit**](#pipelining-with-forwarding-and-hazard-detection-unit)
++ [**Final Overview**](#final-overview)
++ [**Testing with Instructions**](#testing-with-instructions)
++ [**Expected Results**](#expected-results)
++ [**Instruction Pipeline**](#instruction-pipeline)
++ [**Compilation and Elaboration**](#compilation-and-elaboration)
++ [**Results**](#results)
++ [**References**](#references)
 
 ## Introduction
 The ARMv8 architecture is a 64-bit architecture with native support for 32 bit instructions. It has 31 general purpose registers, each 64-bits wide. Compared to this, the 32-bit ARMv7 architecture had 15 general purpose registers, each 32-bits wide. The ARMv8 follows some key design principles:
@@ -499,7 +499,7 @@ That is 	***registerData[10]  = 64'd7;***
 ![](./readme/hazardingexample.png) 
 ## Compilation and Elaboration
 
-The project was developed on Eclipse Platform using the Sigasi plugin. GTKWave was used to study the wave outputs. Once [iverilog](https://iverilog.icarus.com/) and [gtkwave](https://gtkwave.sourceforge.net/) are installed, run the following commands for [simulation](https://iverilog.fandom.com/wiki/Simulation) and to see the wave output file.
+The project was developed on Eclipse Platform using the Sigasi plugin. GTKWave was used to study the wave outputs. Once [iverilog](https://iverilog.icarus.com/) and [gtkwave](https://gtkwave.sourceforge.net/) are installed, run the following commands for [simulation](https://iverilog.fandom.com/wiki/Simulation) in the src![src](./readme/hazardingexample.pn)  directory. Use GTKwave and to see the wave output file.
 
 	iverilog -o ARMLEG ARMLEGvtf.v
 	vvp ARMLEG
@@ -511,24 +511,24 @@ A summary of expected results:
 | Register[location]|  Decimal Value	| 
 |:------------------|:----------|
 |***Datapath*** | ***Results***|
-|registerData[10] | 64'd7 or 7|
-|registerData[11] | 64'd9 or 9|
-|registerData[12] | 64'd7 or 7|
-|registerData[13] | 64'd8 or 8|
-|registerData[14] | 64'd11 or 11|
+|registerData[10] | 7|
+|registerData[11] | 9|
+|registerData[12] | 7|
+|registerData[13] | 8|
+|registerData[14] | 11|
 |***Forwarding Unit*** | ***Results***|
-|registerData[2] | 64'd13 or 13|
-|registerData[12] | 64'd5 or 5|
-|registerData[13] | 64'd15 or 15|
-|registerData[14] | 64'd26 or 26|
-|registerData[15] | 64'd113 or 113|
+|registerData[2] | 13|
+|registerData[12] | 5|
+|registerData[13] |15|
+|registerData[14] |26|
+|registerData[15] |113|
 |***Hazard Detection Unit*** | ***Results***|
-|registerData[2] | 64'd13 or 13|
+|registerData[2] | 13|
 |registerData[4] | nops (*Hazard Detection*)|
-|registerData[4] | 64'd5 or 5|
-|registerData[8] | 64'd15 or 15|
-|registerData[9] | 64'd18 or 18|
-|registerData[1] | 64'd5 or 5|
+|registerData[4] | 5|
+|registerData[8] | 15|
+|registerData[9] | 18|
+|registerData[1] | 5|
 
 The results can be verified from the values seen for writeAddress and writeData:
 
