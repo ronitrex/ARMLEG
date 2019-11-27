@@ -294,7 +294,7 @@ This instruction will load to X10 the value at X1 plus byte offset 40. The X1 re
 
 So this will load the value *64'd7* stored at address #56 in Data memory to X10 register in the Register module. 
 
-		registerData[10]  = 64'd7;
+	registerData[10]  = 64'd7;
 
 | Instruction Opcode|  DT_address	| op | Rn| Rt|
 |:------------------|:----------|:---------------|:---------------|:-----------|
@@ -316,7 +316,7 @@ This instruction will load to X11 the value at X2 [*registerData[2] <= 64'd12*] 
 
 So this will load the value *d'9* to X11 register in the Register module. 
 
-		registerData[11]  = 64'd9;
+	registerData[11]  = 64'd9;
 
 
 | Instruction Opcode|  Rm	| shant | Rn| Rd|
@@ -342,7 +342,7 @@ This instruction will load to X12 the value at X3 [*registerData[3] <= 64'd3*] *
 So this will load the value *d'7* to X12 register in the Register module. 
 
 
-		registerData[12]  = 64'd7;
+	registerData[12]  = 64'd7;
 
 
 | Instruction Opcode|  Rm	| shant | Rn| Rd|
@@ -364,7 +364,7 @@ This instruction will load to X13 the value at X1 plus byte offset 48. The X1 re
 
 So this will load the value *64'd8* stored at address #64 in Data memory to X13 register in the Register module.
 
-		registerData[13]  = 64'd8;
+	registerData[13]  = 64'd8;
 
 | Instruction Opcode|  DT_address	| op | Rn| Rt|
 |:------------------|:----------|:---------------|:---------------|:-----------|
@@ -388,7 +388,7 @@ This instruction will load to X14 the value at X5 [*registerData[5] <= 64'd5*] *
 So this will load the value *d'11* to X14 register in the Register module. 
 
 
-		registerData[14]  = 64'd11;
+	registerData[14]  = 64'd11;
 
 
 | Instruction Opcode|  Rm	| shant | Rn| Rd|
@@ -487,8 +487,9 @@ Data[16-19] = 'b10001011; 000~00110~; 000000~00; 101~01110
 ## Instruction Pipeline 
 The instructions should fill the pipeline in stages. The first write back happens in *clock cycle 5* or **CC 5**. So, the first operation should finish its execution in fifth clock cycle and in this case should give the following result for registers Module.   
 
-		writeAddress[4:0] = 10
-		writeData[63:0] = 7
+	writeAddress[4:0] = 10
+	writeData[63:0] = 7	
+
 That is 	***registerData[10]  = 64'd7;***
 
 
@@ -499,7 +500,7 @@ That is 	***registerData[10]  = 64'd7;***
 ![](./readme/hazardingexample.png) 
 ## Compilation and Elaboration
 
-The project was developed on [**Eclipse Platform using the Sigasi**](https://www.sigasi.com/) plugin. [**GTKWave**](https://gtkwave.sourceforge.net/) was used to study the wave outputs. Once [iverilog](https://iverilog.icarus.com/) and [gtkwave](https://gtkwave.sourceforge.net/) are installed, run the following commands for [simulation](https://iverilog.fandom.com/wiki/Simulation) in the [src](./src)  directory. Use **GTKWave** and to see the wave output file.
+The project was developed on [**Eclipse Platform using the Sigasi**](https://www.sigasi.com/) plugin. [**GTKWave**](https://gtkwave.sourceforge.net/) was used to study the wave outputs. Once [**iverilog**](https://iverilog.icarus.com/) and **GTKWave** are installed, run the following commands for [simulation](https://iverilog.fandom.com/wiki/Simulation) in the [src](./src)  directory. Use **GTKWave** to see the wave output file.
 
 	iverilog -o ARMLEG ARMLEGvtf.v
 	vvp ARMLEG
@@ -508,7 +509,7 @@ The project was developed on [**Eclipse Platform using the Sigasi**](https://www
 ## Results
 A summary of expected results:
 
-| Register[location]|  Decimal Value	| 
+| Register[writeAddress]|  writeData(in decimal)	| 
 |:------------------|:----------|
 |***Datapath*** | ***Results***|
 |registerData[10] | 7|
@@ -538,7 +539,7 @@ GTKWave produces the following output.
 
 ![](./readme/Res.png)
 
-The operation signals and other units in more detail:
+In more detail:
 
 ![](./readme/ResZ.png)
 
