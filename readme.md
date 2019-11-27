@@ -1,14 +1,15 @@
 # ARM-LEGv8 CPU
 ## Table of contents
-+ [Introduction](##Introduction)
-+ [Architecture](##Architecture)
-+ [Final Overview](##Final%20Overview)
-+ [Testing with Instructions](##Testing%20with%20Instructions)
-+ [Expected Results](##Expected%20Results)
-+ [Instruction Pipeline](##Instruction%20Pipeline)
-+ [Compilation and Elaboration](##Compilation%20and%20Elaboration)
-+ [Results](##Results)
-+ [References](##References)
++ [Introduction](./#introduction)
++ [Architecture](./#Architecture)
++ [Pipelining with Forwarding and Hazard Detection Unit](./pipelining-with-forwarding-and-hazard-detection-unit)
++ [Final Overview](./#final-overview)
++ [Testing with Instructions](./#testing-with-instructions)
++ [Expected Results](./#expected-results)
++ [Instruction Pipeline](./#instruction-pipeline)
++ [Compilation and Elaboration](./#compilation-and-elaboration)
++ [Results](./#results)
++ [References](./#references)
 
 ## Introduction
 The ARMv8 architecture is a 64-bit architecture with native support for 32 bit instructions. It has 31 general purpose registers, each 64-bits wide. Compared to this, the 32-bit ARMv7 architecture had 15 general purpose registers, each 32-bits wide. The ARMv8 follows some key design principles:
@@ -497,18 +498,21 @@ A summary of expected results:
 
 | Register[location]|  Decimal Value	| 
 |:------------------|:----------|
+|***Datapath*** | ***Results***|
 |registerData[10] | 64'd7 or 7|
 |registerData[11] | 64'd9 or 9|
 |registerData[12] | 64'd7 or 7|
 |registerData[13] | 64'd8 or 8|
 |registerData[14] | 64'd11 or 11|
+|***Forwarding Unit*** | ***Results***|
 |registerData[2] | 64'd13 or 13|
 |registerData[12] | 64'd5 or 5|
 |registerData[13] | 64'd15 or 15|
 |registerData[14] | 64'd26 or 26|
 |registerData[15] | 64'd113 or 113|
+|***Hazard Detection Unit*** | ***Results***|
 |registerData[2] | 64'd13 or 13|
-|registerData[4] | nops (Hazard Detection)|
+|registerData[4] | nops (*Hazard Detection*)|
 |registerData[4] | 64'd5 or 5|
 |registerData[8] | 64'd15 or 15|
 |registerData[9] | 64'd18 or 18|
