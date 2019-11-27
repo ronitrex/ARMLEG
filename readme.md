@@ -1,15 +1,15 @@
 # ARM-LEGv8 CPU
 ## Table of contents
-+ [Introduction](./#introduction)
-+ [Architecture](./#Architecture)
-+ [Pipelining with Forwarding and Hazard Detection Unit](./pipelining-with-forwarding-and-hazard-detection-unit)
-+ [Final Overview](./#final-overview)
-+ [Testing with Instructions](./#testing-with-instructions)
-+ [Expected Results](./#expected-results)
-+ [Instruction Pipeline](./#instruction-pipeline)
-+ [Compilation and Elaboration](./#compilation-and-elaboration)
-+ [Results](./#results)
-+ [References](./#references)
++ [Introduction](#introduction)
++ [Architecture](#Architecture)
++ [Pipelining with Forwarding and Hazard Detection Unit](#pipelining-with-forwarding-and-hazard-detection-unit)
++ [Final Overview](#final-overview)
++ [Testing with Instructions](#testing-with-instructions)
++ [Expected Results](#expected-results)
++ [Instruction Pipeline](#instruction-pipeline)
++ [Compilation and Elaboration](#compilation-and-elaboration)
++ [Results](#results)
++ [References](#references)
 
 ## Introduction
 The ARMv8 architecture is a 64-bit architecture with native support for 32 bit instructions. It has 31 general purpose registers, each 64-bits wide. Compared to this, the 32-bit ARMv7 architecture had 15 general purpose registers, each 32-bits wide. The ARMv8 follows some key design principles:
