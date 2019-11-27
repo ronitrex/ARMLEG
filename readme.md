@@ -526,6 +526,8 @@ The operation signals and other units can be viewed in detail
 
 ![](./readme/ResZ.png)
 
+![](./readme/ResZ.png)
+
 ## References
 A list of references and study material used for this project:
 
