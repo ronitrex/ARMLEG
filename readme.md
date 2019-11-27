@@ -1,4 +1,5 @@
-# ARM-LEGv8 CPU
+# Pipelined ARM-LEGv8 CPU with Forwarding and Hazard Detection
+
 ## Table of contents
 + [Introduction](#introduction)
 + [Architecture](#Architecture)
@@ -407,69 +408,80 @@ Data[16-19] = 'b10001011; 000~00110~; 000000~00; 101~01110
 ### **Similarly, the instruction memory is loaded with the following instructions to test the forwarding unit:**
 
 #### SUB X2, X1, X3
-X2 = X1 - X3	  
-X2 = 'd16 - 'd3 = 'd13
 
-		registerData[2]  = 64'd13;
+	X2 = X1 - X3	  
+	X2 = 'd16 - 'd3 = 'd13
+	
+	registerData[2]  = 64'd13;
 
 #### AND X12, X2, X5
-X12 = X2 & X5  
-X12 = 'd13	& 'd5  
-X12 = 'b1101 & 'b0101 = 'b0101 = 'd5
 
-		registerData[12]  = 64'd5;
+	X12 = X2 & X5  
+	X12 = 'd13	& 'd5  
+	X12 = 'b1101 & 'b0101 = 'b0101 = 'd5
+	
+	registerData[12]  = 64'd5;
 
 #### ORR X13, X6, X2
-X13 = X6 | X2  
-X13 = 'd6 | 'd13  
-X13 = 'b0110 | 'b1101 = 'b1111 = 'd15
 
-		registerData[13]  = 64'd15;
+	X13 = X6 | X2  
+	X13 = 'd6 | 'd13  
+	X13 = 'b0110 | 'b1101 = 'b1111 = 'd15
+	
+	registerData[13]  = 64'd15;
 
 #### ADD X14, X2, X2
-X14 = X2 + X2	
-X14 = 'd13 + 'd13 = 'd26
 
-		registerData[14]  = 64'd26;
+	X14 = X2 + X2  
+	X14 = 'd13 + 'd13 = 'd26
+	
+	registerData[14]  = 64'd26;
 
 #### STUR X15, [X2, #100]
-X15 = X2 + 100	
-X15 = 'd13 + 'd100 = 'd113
 
-		registerData[15]  = 64'd113;
+	X15 = X2 + 100  
+	X15 = 'd13 + 'd100 = 'd113
+	
+	registerData[15]  = 64'd113;
 
 ### **Instructions to test the hazard detection unit:**
-#### SUB X2, X1, X3
-X2 = X1 - X3	  
-X2 = 'd16 - 'd3 = 'd13
 
-		registerData[2]  = 64'd13;
+#### SUB X2, X1, X3
+
+	X2 = X1 - X3	  
+	X2 = 'd16 - 'd3 = 'd13
+	
+	registerData[2]  = 64'd13;
 
 #### AND X4, X2, X5
-X4 = X2 & X5  
-X4 = 'd13	& 'd5  
-X4 = 'b1101 & 'b0101 = 'b0101 = 'd5
 
-		registerData[4]  = 64'd5;
+	X4 = X2 & X5  
+	X4 = 'd13	& 'd5  
+	X4 = 'b1101 & 'b0101 = 'b0101 = 'd5
+	
+	registerData[4]  = 64'd5;
 
 #### ORR X8, X2, X6
-X8 = X2 | X6  
-X8 = 'd13 | 'd6  
-X8 = 'b1101 | 'b0110  = 'b1111 = 'd15
 
-		registerData[8]  = 64'd15;
+	X8 = X2 | X6  
+	X8 = 'd13 | 'd6  
+	X8 = 'b1101 | 'b0110  = 'b1111 = 'd15
+	
+	registerData[8]  = 64'd15;
 
 #### ADD X9, X4, X2
-X9 = X4 + X2	
-X9 = 'd5 + 'd13 = 'd18
 
-		registerData[9]  = 64'd18;
+	X9 = X4 + X2	
+	X9 = 'd5 + 'd13 = 'd18
+	
+	registerData[9]  = 64'd18;
 
 #### SUB X1, X6, X7
-X1 = X6 - X7	
-X1 = 'd6 + 'd1 = 'd5
 
-		registerData[1]  = 64'd5;
+	X1 = X6 - X7	
+	X1 = 'd6 + 'd1 = 'd5
+	
+	registerData[1]  = 64'd5;
 
 
 ## Instruction Pipeline 
@@ -518,15 +530,15 @@ A summary of expected results:
 |registerData[9] | 64'd18 or 18|
 |registerData[1] | 64'd5 or 5|
 
+The results can be verified from the values seen for writeAddress and writeData:
+
+![](./readme/ResZZ.png)
+
 GTKWave produces the following output.
 
 ![](./readme/Res.png)
 
-The results can be verified from the values seen for writeAddress and writeData
-
-![](./readme/ResZZ.png)
-
-The operation signals and other units can be viewed in detail 
+The operation signals and other units in more detail:
 
 ![](./readme/ResZ.png)
 
@@ -539,7 +551,3 @@ A list of references and study material used for this project:
 + [**Verilog Quick Reference**](https://web.stanford.edu/class/ee183/handouts_win2003/VerilogQuickRef.pdf)
 + [**LEG-v8 Reference Sheet**](http://www.eecs.umich.edu/courses/eecs370/eecs370.f19/resources/materials/ARM-v8-Quick-Reference-Guide.pdf)
 + [**Computer Organization and Design ARM Edition, 1st Edition - David Patterson, John Hennessy**](https://www.elsevier.com/books/computer-organization-and-design-arm-edition/patterson/978-0-12-801733-3)
-
-
-
-
