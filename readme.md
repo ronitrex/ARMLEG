@@ -417,7 +417,7 @@ Data[16-19] = 'b10001011; 000~00110~; 000000~00; 101~01110
 #### AND X12, X2, X5
 
 	X12 = X2 & X5  
-	X12 = 'd13	& 'd5  
+	X12 = 'd13 & 'd5  
 	X12 = 'b1101 & 'b0101 = 'b0101 = 'd5
 	
 	registerData[12]  = 64'd5;
@@ -456,7 +456,7 @@ Data[16-19] = 'b10001011; 000~00110~; 000000~00; 101~01110
 #### AND X4, X2, X5
 
 	X4 = X2 & X5  
-	X4 = 'd13	& 'd5  
+	X4 = 'd13 & 'd5  
 	X4 = 'b1101 & 'b0101 = 'b0101 = 'd5
 	
 	registerData[4]  = 64'd5;
@@ -499,7 +499,7 @@ That is 	***registerData[10]  = 64'd7;***
 ![](./readme/hazardingexample.png) 
 ## Compilation and Elaboration
 
-The project was developed on Eclipse Platform using the Sigasi plugin. GTKWave was used to study the wave outputs. Once [iverilog](https://iverilog.icarus.com/) and [gtkwave](https://gtkwave.sourceforge.net/) are installed, run the following commands for [simulation](https://iverilog.fandom.com/wiki/Simulation) in the [src](./src)  directory. Use **GTKWave** and to see the wave output file.
+The project was developed on [**Eclipse Platform using the Sigasi**](https://www.sigasi.com/) plugin. [**GTKWave**](https://gtkwave.sourceforge.net/) was used to study the wave outputs. Once [iverilog](https://iverilog.icarus.com/) and [gtkwave](https://gtkwave.sourceforge.net/) are installed, run the following commands for [simulation](https://iverilog.fandom.com/wiki/Simulation) in the [src](./src)  directory. Use **GTKWave** and to see the wave output file.
 
 	iverilog -o ARMLEG ARMLEGvtf.v
 	vvp ARMLEG
