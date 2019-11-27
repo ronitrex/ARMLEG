@@ -24,13 +24,17 @@ module RegisterModule
 		registerData[6] = 64'd6;
 		registerData[7] = 64'd1;
 	end
-
+		
 	always @(*) begin
-		regData1 = registerData[readAddress1];
-		regData2 = registerData[readAddress2];
-
 		if (regWrite == 1) begin
 			registerData[writeAddress] <= writeData;
 		end
 	end
+
+	always @(negedge CLOCK) begin
+		regData1 <= registerData[readAddress1];
+		regData2 <= registerData[readAddress2];
+	end
+
+
 endmodule

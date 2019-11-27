@@ -1,0 +1,15 @@
+module ControlUnitMUX
+(
+	input [10:0] controlInstruction_in,
+	input ControlWire,
+	output reg [10:0] controlMuxout
+);
+	reg [10:0] zeroData = 10'b0;
+
+	always @(*)  case (ControlWire)
+		0: controlMuxout = zeroData;
+		1: controlMuxout = controlInstruction_in;
+		default: controlMuxout = controlInstruction_in;
+	endcase
+
+endmodule

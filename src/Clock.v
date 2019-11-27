@@ -18,7 +18,7 @@ module Clock(
 
 	initial begin
 		CLOCK <= 1;
-		#4;
+		#5;
 		// Clock terminates after 4ns
 		$finish;
 	end

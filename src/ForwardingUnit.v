@@ -13,23 +13,25 @@ module ForwardingUnit
 	always @(*) begin
 		ForwardA = 2'b00;
 		ForwardB = 2'b00;
-		
-		//EX hazard:
+
+		//EX hazard:	
 		if ((EXMEM_RegWrite) && (EXMEM_RegisterRd != 31) && (EXMEM_RegisterRd == IDEX_RegisterRn)) begin
 			ForwardA = 2'b10;
-		end else if ((EXMEM_RegWrite) && (EXMEM_RegisterRd != 31) && (EXMEM_RegisterRd == IDEX_RegisterRm)) begin
+		end
+		if ((EXMEM_RegWrite) && (EXMEM_RegisterRd != 31) && (EXMEM_RegisterRd == IDEX_RegisterRm)) begin
 			ForwardB = 2'b10;
-		end 
+		end
 
-		//MEM hazard:
+		//MEM hazard:	
 		if ((MEMWB_RegWrite) && (MEMWB_RegisterRd != 31) && (MEMWB_RegisterRd == IDEX_RegisterRn))
-		// && !((EXMEM_RegWrite) && (EXMEM_RegisterRd != 31) && (EXMEM_RegisterRd != IDEX_RegisterRn))) 
-		begin
-			ForwardA = 2'b01;
-		end else if ((MEMWB_RegWrite) && (MEMWB_RegisterRd != 31) && (MEMWB_RegisterRd == IDEX_RegisterRm))
-		// && !((EXMEM_RegWrite) && (EXMEM_RegisterRd != 31) && (EXMEM_RegisterRd != IDEX_RegisterRm))) 
-		begin
-			ForwardB = 2'b01;
-		end 
+		//&& !((EXMEM_RegWrite) && (EXMEM_RegisterRd != 31) && (EXMEM_RegisterRd != IDEX_RegisterRn)))
+			begin
+				ForwardA = 2'b01;
+			end
+		if ((MEMWB_RegWrite) && (MEMWB_RegisterRd != 31) && (MEMWB_RegisterRd == IDEX_RegisterRm))
+		//&& !((EXMEM_RegWrite) && (EXMEM_RegisterRd != 31) && (EXMEM_RegisterRd != IDEX_RegisterRm)))
+			begin
+				ForwardB = 2'b01;
+			end
 	end
 endmodule

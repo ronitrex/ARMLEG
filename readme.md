@@ -1,6 +1,16 @@
 # ARM-LEGv8 CPU
+## Table of contents
++ [Introduction](##Introduction)
++ [Architecture](##Architecture)
++ [Final Overview](##Final%20Overview)
++ [Testing with Instructions](##Testing%20with%20Instructions)
++ [Expected Results](##Expected%20Results)
++ [Instruction Pipeline](##Instruction%20Pipeline)
++ [Compilation and Elaboration](##Compilation%20and%20Elaboration)
++ [Results](##Results)
++ [References](##References)
 
-
+## Introduction
 The ARMv8 architecture is a 64-bit architecture with native support for 32 bit instructions. It has 31 general purpose registers, each 64-bits wide. Compared to this, the 32-bit ARMv7 architecture had 15 general purpose registers, each 32-bits wide. The ARMv8 follows some key design principles:
 	
 	- Simplicity favours regularity
@@ -182,7 +192,7 @@ The new improved architecture can now execute the basic instructions *load-store
 
 ![](./readme/uncondbranch.png)
 
-### Pipelining
+## Pipelining with Forwarding and Hazard Detection Unit
 Pipelining is an implementation technique in which multiple instructions are
 overlapped in execution.
 LEGv8 instructions classically take five steps:
@@ -195,24 +205,60 @@ LEGv8 instructions classically take five steps:
 
 ![](./readme/pipelinestage.png)
 
+
+### Forwarding Unit
+Consider the following example,
+![](./readme/forwardingexample.png)
+
+The last four instructions are all dependent on the result in register X2 of the
+first instruction. If register X2 had the value 12 before the subtract instruction and
+13 afterwards, the programmer intends that 13 will be used in the following
+instructions that refer to register X2.  
+To achieve this, a forwarding unit is required that can execute this segment without stalls by simply forwarding the data as soon as it is available to any units that need it before it is ready to be read from the register file.  
+![](./readme/forwarding.png)  
+
+The forwarding unit forwards the data to the ALU from different parts of the pipeline.
+![](./readme/ForwardingUnitzoomed.png) 
+
+ForwardA and ForwardB *forward* the output from other stages.
+![](./readme/forwardingMUXcontrol.png) 
+
+### Hazard Detection Unit
+Consider the following example, 
+![](./readme/hazardingexample.png) 
+Since the dependence between the *SUB* and the following instruction *AND*
+goes backward in time, this hazard cannot be solved by forwarding. Hence, this combination must result in a stall by the hazard detection unit.
+
+The forwarding unit controls the ALU multiplexors to replace the value from a general-purpose register with the value from the proper pipeline register.  
+The hazard detection unit controls the writing of the PC and IF/ID registers plus the multiplexor that chooses between the real control values and all *0*s. The hazard detection unit stalls and deasserts the control fields if the load-use hazard test above is true.
+![](./readme/hazardDetectionandForwarding.png)
+
 ## Final Overview
-The Pipelined architecture is combined with the Control Unit to get the complete architecture for this project.
+The Pipelined architecture featuring the Control Unit 
 ![](./readme/PipelineandControl.png)
+
+The Pipelined architecture with the Forwarding and Hazard Detection Unit
+![](./readme/finalPipeline.png)
+
+
 
 ## Testing with Instructions
 To test the performance and correctness of the pipeline, some instructions are executed on it. The Register module is initialized with some values.
 
-	  initial begin
-		 registerData[31] <= 64'b0;
-		 registerData[1] <= 64'd16;
-		 registerData[2] <= 64'd12;
-		 registerData[3] <= 64'd3;
-		 registerData[4] <= 64'd4;
-		 registerData[5] <= 64'd5;
-		 registerData[6] <= 64'd6;
-	  end
+	initial begin
+		registerData[31] = 64'b0;
+		registerData[1] = 64'd16;
+		registerData[2] = 64'd12;
+		registerData[3] = 64'd3;
+		registerData[4] = 64'd4;
+		registerData[5] = 64'd5;
+		registerData[6] = 64'd6;
+		registerData[7] = 64'd1;
+	end
 
-The Instruction Memory is initialized with the following instructions:
+The Instruction Memory is initialized with the following instructions,
+
+1. Testing D-type and R-type instructions.
 
 		LDUR X10, [X1, #40]
 		SUB X11, X2, X3
@@ -220,11 +266,28 @@ The Instruction Memory is initialized with the following instructions:
 		LDUR X13, [X1, #48]
 		ADD X14, X5, X6
 
+2. Testing Forwarding Unit.
+
+		SUB X2, X1, X3
+		AND X12, X2, X5
+		ORR X13, X6, X2
+		ADD X14, X2, X2
+		STUR X15, [X2, #100]
+
+3. Testing Hazard Detection Unit.
+
+		SUB X2, X1, X3
+		AND X4, X2, X5
+		ORR X8, X2, X6
+		ADD X9, X4, X2
+		SUB X1, X6, X7
+	
 ## Expected Results
-A summary of the instructions is provided with expected results and how the instructions are worked out for the Instruction Memory.
+A summary of the instructions is provided with expected results.
 
+Some instructions have been worked out and explained for ease of understanding.
 
-### LDUR X10, [X1, #40]
+#### LDUR X10, [X1, #40]
 This instruction will load to X10 the value at X1 plus byte offset 40. The X1 register is initialized with the value *64'd16* [*registerData[1] <= 64'd16*]. This will load the value stored in Data memory at register address *(d'16 + d'40) =* **d'56** to register X10. The Data memory holds the value *64'd7* at the 56th register [*memoryData[56] = 64'd7*]:
 
 So this will load the value *64'd7* stored at address #56 in Data memory to X10 register in the Register module. 
@@ -246,7 +309,7 @@ Data[0-3] = 'b11111000; 010~00010 ; 1000~00~00; 001~01010
 |instructionMemoryData[2]| 	'b10000000|	
 |instructionMemoryData[3]| 	'b00101010|	 
 
-### SUB X11, X2, X3
+#### SUB X11, X2, X3
 This instruction will load to X11 the value at X2 [*registerData[2] <= 64'd12*] *minus* the value at X3 [*registerData[3] <= 64'd3*]. This will  result in *(d'12 - d'3) = d'9*. 
 
 So this will load the value *d'9* to X11 register in the Register module. 
@@ -270,7 +333,7 @@ Data[4-7] = 'b11001011; 000~00011~; 000000~00; 010~01011
 |instructionMemoryData[6]| 	'b00000000|	
 |instructionMemoryData[7]| 	'b01001011|	
 
-### ADD X12, X3, X4
+#### ADD X12, X3, X4
 This instruction will load to X12 the value at X3 [*registerData[3] <= 64'd3*] *plus* the value at X4 [*registerData[4] <= 64'd4*]. This will  result in *(d'3 + d'4) = d'7*.
 	 
 		 
@@ -294,7 +357,7 @@ Data[8-11] = 'b10001011; 000~00100~; 000000~00; 011~01100
 |instructionMemoryData[10] | 'b00000000 |
 |instructionMemoryData[11] | 'b01101100 | 
 
-### LDUR X13, [X1, #48]
+#### LDUR X13, [X1, #48]
 This instruction will load to X13 the value at X1 plus byte offset 48. The X1 register is initialized with the value *64'd16* [*registerData[1] <= 64'd16*]. This will load the value stored in Data memory at register address *(d'16 + d'48) =* **d'64** to register X10. The Data memory holds the value *64'd8* at the 64th register [*memoryData[64] = 64'd8*]:
 
 So this will load the value *64'd8* stored at address #64 in Data memory to X13 register in the Register module.
@@ -316,7 +379,7 @@ Data[12-15] = 'b11111000; 010~00010 ; 1000~00~00; 001~01010
 |instructionMemoryData[14] | 'b00000000| 
 |instructionMemoryData[15] | 'b00101101|
 
-### ADD X14, X5, X6
+#### ADD X14, X5, X6
 This instruction will load to X14 the value at X5 [*registerData[5] <= 64'd5*] *plus* the value at X6 [*registerData[6] <= 64'd6*]. This will  result in *(d'5 + d'6) = d'11*.
 	 
 		 
@@ -340,6 +403,74 @@ Data[16-19] = 'b10001011; 000~00110~; 000000~00; 101~01110
 |instructionMemoryData[18] | 'b00000000| 
 |instructionMemoryData[19] | 'b10101110|
 
+### **Similarly, the instruction memory is loaded with the following instructions to test the forwarding unit:**
+
+#### SUB X2, X1, X3
+X2 = X1 - X3	  
+X2 = 'd16 - 'd3 = 'd13
+
+		registerData[2]  = 64'd13;
+
+#### AND X12, X2, X5
+X12 = X2 & X5  
+X12 = 'd13	& 'd5  
+X12 = 'b1101 & 'b0101 = 'b0101 = 'd5
+
+		registerData[12]  = 64'd5;
+
+#### ORR X13, X6, X2
+X13 = X6 | X2  
+X13 = 'd6 | 'd13  
+X13 = 'b0110 | 'b1101 = 'b1111 = 'd15
+
+		registerData[13]  = 64'd15;
+
+#### ADD X14, X2, X2
+X14 = X2 + X2	
+X14 = 'd13 + 'd13 = 'd26
+
+		registerData[14]  = 64'd26;
+
+#### STUR X15, [X2, #100]
+X15 = X2 + 100	
+X15 = 'd13 + 'd100 = 'd113
+
+		registerData[15]  = 64'd113;
+
+### **Instructions to test the hazard detection unit:**
+#### SUB X2, X1, X3
+X2 = X1 - X3	  
+X2 = 'd16 - 'd3 = 'd13
+
+		registerData[2]  = 64'd13;
+
+#### AND X4, X2, X5
+X4 = X2 & X5  
+X4 = 'd13	& 'd5  
+X4 = 'b1101 & 'b0101 = 'b0101 = 'd5
+
+		registerData[4]  = 64'd5;
+
+#### ORR X8, X2, X6
+X8 = X2 | X6  
+X8 = 'd13 | 'd6  
+X8 = 'b1101 | 'b0110  = 'b1111 = 'd15
+
+		registerData[8]  = 64'd15;
+
+#### ADD X9, X4, X2
+X9 = X4 + X2	
+X9 = 'd5 + 'd13 = 'd18
+
+		registerData[9]  = 64'd18;
+
+#### SUB X1, X6, X7
+X1 = X6 - X7	
+X1 = 'd6 + 'd1 = 'd5
+
+		registerData[1]  = 64'd5;
+
+
 ## Instruction Pipeline 
 The instructions should fill the pipeline in stages. The first write back happens in *clock cycle 5* or **CC 5**. So, the first operation should finish its execution in fifth clock cycle and in this case should give the following result for registers Module.   
 
@@ -349,7 +480,10 @@ That is 	***registerData[10]  = 64'd7;***
 
 
 ![](./readme/instructioncycle.png)
-
+### Forwarding Unit
+![](./readme/forwardingexample.png)
+### Hazard Detection Unit
+![](./readme/hazardingexample.png) 
 ## Compilation and Elaboration
 
 The project was developed on Eclipse Platform using the Sigasi plugin. GTKWave was used to study the wave outputs. Once [iverilog](https://iverilog.icarus.com/) and [gtkwave](https://gtkwave.sourceforge.net/) are installed, run the following commands for [simulation](https://iverilog.fandom.com/wiki/Simulation) and to see the wave output file.
@@ -368,14 +502,25 @@ A summary of expected results:
 |registerData[12] | 64'd7 or 7|
 |registerData[13] | 64'd8 or 8|
 |registerData[14] | 64'd11 or 11|
+|registerData[2] | 64'd13 or 13|
+|registerData[12] | 64'd5 or 5|
+|registerData[13] | 64'd15 or 15|
+|registerData[14] | 64'd26 or 26|
+|registerData[15] | 64'd113 or 113|
+|registerData[2] | 64'd13 or 13|
+|registerData[4] | nops (Hazard Detection)|
+|registerData[4] | 64'd5 or 5|
+|registerData[8] | 64'd15 or 15|
+|registerData[9] | 64'd18 or 18|
+|registerData[1] | 64'd5 or 5|
 
 GTKWave produces the following output.
 
-![](./readme/Results.png)
+![](./readme/Res.png)
 
-The first operation finishes execution in the fifth clock cycle as expected. 
+The operation signals and other units can be viewed in detail 
 
-![](./readme/resultszoomed.png)
+![](./readme/ResZ.png)
 
 ## References
 A list of references and study material used for this project:

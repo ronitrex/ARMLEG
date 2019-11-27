@@ -5,6 +5,7 @@
 `include "Adder.v"
 `include "InstructionMemory.v"
 `include "ControlUnit.v"
+`include "ControlUnitMUX.v"
 `include "RegisterModule.v"
 `include "SignExtend.v"
 `include "ALUControl.v"
@@ -54,6 +55,7 @@ module ARMLEG (
 	output [63:0] dataMemoryMUXresult;
 	output [63:0] programCounter_in;
 	output [63:0] programCounter_out;
+	output [10:0] ControlUnitMUXout;
 
 	// IFID pipeline
 	output [63:0] IFID_ProgramCounter;
@@ -111,7 +113,7 @@ module ARMLEG (
 	// IFID_CPUInstruction[20:16] = RegisterRm
 	// IFID_CPUInstruction[9:5] = RegisterRn
 	// IFID_CPUInstruction[4:0] = RegisterRd or WriteReg or WriteAddress
-	HazardDetectionUnit hazardDetectionUnit(IDEX_MemRead, IDEX_WriteReg, IFID_CPUInstruction[20:16], IFID_CPUInstruction[9:5], IFID_Write, PCWire, ControlWire);
+	HazardDetectionUnit hazardDetectionUnit(IDEX_MemRead, EXMEM_RegWrite, IDEX_WriteReg, IFID_CPUInstruction[20:16], IFID_CPUInstruction[9:5], IFID_Write, PCWire, ControlWire);
 	
 	// Forwarding unit
 	// IFID_CPUInstruction[20:16] = RegisterRm
@@ -135,8 +137,10 @@ module ARMLEG (
 	IFID IFID (CLOCK, IFID_Write, programCounter_out, CPUInstruction,
 		IFID_ProgramCounter, IFID_CPUInstruction
 	);
-		
-	ControlUnit controlUnit(ControlWire, IFID_CPUInstruction[31:21], reg2Loc, ALUsrc, memToReg, regWrite, memRead, memWrite, branch, ALUop);
+	
+	ControlUnitMUX controlUnitMUX(IFID_CPUInstruction[31:21], ControlWire, ControlUnitMUXout);
+
+	ControlUnit controlUnit(ControlUnitMUXout, reg2Loc, ALUsrc, memToReg, regWrite, memRead, memWrite, branch, ALUop);
 
 	RegisterMux registerMUX(IFID_CPUInstruction[20:16], IFID_CPUInstruction[4:0], reg2Loc, regMUX);
 
@@ -165,7 +169,6 @@ module ARMLEG (
 	);
 
 	DataMemory dataMemory(CLOCK, EXMEM_InputAddress, EXMEM_InputData, EXMEM_MemRead, EXMEM_MemWrite, readData);
-
 
 	// MEMWB stage
 	MEMWB MEMWB(CLOCK, EXMEM_InputAddress, readData, EXMEM_WriteReg, EXMEM_RegWrite, EXMEM_MemToReg,
