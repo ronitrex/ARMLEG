@@ -7,15 +7,15 @@ module SignExtend
 	always @(*) begin
 		if (inputInstruction[31:26] == 6'b000101) begin // B
 			signExtendedInstruction[25:0] = inputInstruction[25:0];
-			signExtendedInstruction[63:26] = {64{signExtendedInstruction[25]}};
+			signExtendedInstruction[63:26] = {63{signExtendedInstruction[25]}};
 
 		end else if (inputInstruction[31:24] == 8'b10110100) begin // CBZ
 			signExtendedInstruction[19:0] = inputInstruction[23:5];
-			signExtendedInstruction[63:20] = {64{signExtendedInstruction[19]}};
+			signExtendedInstruction[63:20] = {63{signExtendedInstruction[19]}};
 
 		end else begin // D Type
 			signExtendedInstruction[9:0] = inputInstruction[20:12];
-			signExtendedInstruction[63:10] = {64{signExtendedInstruction[9]}};
+			signExtendedInstruction[63:10] = {63{signExtendedInstruction[9]}};
 		end
 	end
 endmodule

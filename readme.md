@@ -500,7 +500,7 @@ That is 	***registerData[10]  = 64'd7;***
 ![](./readme/hazardingexample.png) 
 ## Compilation and Elaboration
 
-The project was developed on [**Eclipse Platform using the Sigasi**](https://www.sigasi.com/) plugin. [**GTKWave**](https://gtkwave.sourceforge.net/) was used to study the wave outputs. Once [**iverilog**](https://iverilog.icarus.com/) and **GTKWave** are installed, run the following commands for [simulation](https://iverilog.fandom.com/wiki/Simulation) in the [src](./src)  directory. Use **GTKWave** to see the wave output file.
+The project was developed on [**Sigasi Studio.**](https://www.sigasi.com/) [**GTKWave**](https://gtkwave.sourceforge.net/) was used to study the wave outputs. Once [**iverilog**](https://iverilog.icarus.com/) and **GTKWave** are installed, run the following commands for [simulation](https://iverilog.fandom.com/wiki/Simulation) in the [src](./src)  directory. Use **GTKWave** to see the wave output file.
 
 	iverilog -o ARMLEG ARMLEGvtf.v
 	vvp ARMLEG

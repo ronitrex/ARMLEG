@@ -29,7 +29,7 @@ module ARMLEG (
 	input CLOCK,
 	input RESET
 );
-	
+
 	// Datapath 
 	output reg2Loc;
 	output ALUsrc;
@@ -102,7 +102,7 @@ module ARMLEG (
 	output [1:0] ForwardB;
 	output [63:0] ForwardingUnitALUMUXoutA;
 	output [63:0] ForwardingUnitALUMUXoutB;
-	
+
 	// Hazard Detection unit
 	output IFID_Write;
 	output PCWire;
@@ -114,17 +114,17 @@ module ARMLEG (
 	// IFID_CPUInstruction[9:5] = RegisterRn
 	// IFID_CPUInstruction[4:0] = RegisterRd or WriteReg or WriteAddress
 	HazardDetectionUnit hazardDetectionUnit(IDEX_MemRead, EXMEM_RegWrite, IDEX_WriteReg, IFID_CPUInstruction[20:16], IFID_CPUInstruction[9:5], IFID_Write, PCWire, ControlWire);
-	
+
 	// Forwarding unit
 	// IFID_CPUInstruction[20:16] = RegisterRm
 	// IFID_CPUInstruction[9:5] = RegisterRn
 	// IFID_CPUInstruction[4:0] = RegisterRd or WriteReg or WriteAddress
 	ForwardingUnit forwardingUnit(IDEX_RegisterRm, IDEX_RegisterRn, EXMEM_WriteReg, MEMWB_WriteAddress, EXMEM_RegWrite, MEMWB_RegWrite, ForwardA, ForwardB);
 
-    // Forwarding unit multiplexers
-    ForwardingUnitALUMuxA forwardingUnitALUMuxA(IDEX_RegData1, dataMemoryMUXresult, EXMEM_InputAddress, ForwardA, ForwardingUnitALUMUXoutA);
-    ForwardingUnitALUMuxB forwardingUnitALUMuxB(IDEX_RegData2, dataMemoryMUXresult, EXMEM_InputAddress, ForwardB, ForwardingUnitALUMUXoutB);
-    
+	// Forwarding unit multiplexers
+	ForwardingUnitALUMuxA forwardingUnitALUMuxA(IDEX_RegData1, dataMemoryMUXresult, EXMEM_InputAddress, ForwardA, ForwardingUnitALUMUXoutA);
+	ForwardingUnitALUMuxB forwardingUnitALUMuxB(IDEX_RegData2, dataMemoryMUXresult, EXMEM_InputAddress, ForwardB, ForwardingUnitALUMUXoutB);
+
 	ProgramCounter programCounter (CLOCK, RESET, PCWire, programCounter_in, programCounter_out);
 
 	Adder fourAdder (64'b0100, programCounter_out, adderResult);
@@ -137,7 +137,7 @@ module ARMLEG (
 	IFID IFID (CLOCK, IFID_Write, programCounter_out, CPUInstruction,
 		IFID_ProgramCounter, IFID_CPUInstruction
 	);
-	
+
 	ControlUnitMUX controlUnitMUX(IFID_CPUInstruction[31:21], ControlWire, ControlUnitMUXout);
 
 	ControlUnit controlUnit(ControlUnitMUXout, reg2Loc, ALUsrc, memToReg, regWrite, memRead, memWrite, branch, ALUop);
@@ -152,7 +152,7 @@ module ARMLEG (
 	IDEX IDEX(CLOCK, ALUop, ALUsrc, branch, memRead, memWrite, regWrite, memToReg, IFID_ProgramCounter, regData1, regData2, signExtendedResult, IFID_CPUInstruction[31:21], IFID_CPUInstruction[20:16], IFID_CPUInstruction[9:5], IFID_CPUInstruction[4:0],
 		IDEX_ALUop, IDEX_ALUsrc, IDEX_isBranch, IDEX_MemRead, IDEX_MemWrite, IDEX_RegWrite, IDEX_MemToReg, IDEX_ProgramCounter, IDEX_RegData1, IDEX_RegData2, IDEX_SignExtend, IDEX_ALUcontrol, IDEX_RegisterRm, IDEX_RegisterRn, IDEX_WriteReg
 	);
-	
+
 	ALUControl ALUcontrol(IDEX_ALUop, IDEX_ALUcontrol, ALUoperation);
 
 	ALUMux ALUMUX(ForwardingUnitALUMUXoutB, IDEX_SignExtend, IDEX_ALUsrc, ALUmux);
