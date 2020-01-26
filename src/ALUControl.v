@@ -15,5 +15,4 @@ module ALUControl
 			11'b10101010000 : ALUoperation = 4'b0001; // ORR
 		endcase
 	endcase
-
 endmodule

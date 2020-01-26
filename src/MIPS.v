@@ -273,5 +273,3 @@ module registerfile (Read1, Read2, WriteReg, WriteData, RegWrite, Data1, Data2, 
 			RF[WriteReg] <= WriteData;
 	end
 endmodule
-
-	

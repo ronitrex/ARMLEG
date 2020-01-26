@@ -13,5 +13,4 @@ module ForwardingUnitALUMuxB
 		2'b10: ForwardingUnitALUMUXoutB = EXMEM_InputAddress;
 		default: ForwardingUnitALUMUXoutB = regData2;
 	endcase
-
 endmodule

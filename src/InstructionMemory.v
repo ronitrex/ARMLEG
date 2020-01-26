@@ -102,8 +102,7 @@ module InstructionMemory
 		instructionMemoryData[56] = 8'hcb;
 		instructionMemoryData[57] = 8'h07;
 		instructionMemoryData[58] = 8'h00;
-		instructionMemoryData[59] = 8'hc1;	
-		
+		instructionMemoryData[59] = 8'hc1;		
 	end
 
 	always @(programCounter) begin

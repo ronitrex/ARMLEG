@@ -176,5 +176,4 @@ module ARMLEG (
 	);
 
 	DataMemoryMUX dataMemoryMUX(MEMWB_ReadData, MEMWB_Address, MEMWB_MemToReg, dataMemoryMUXresult);
-
 endmodule

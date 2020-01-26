@@ -22,5 +22,4 @@ module ProgramCounter
 	always @(RESET) begin
 		programCounter_out = 0;
 	end
-
 endmodule

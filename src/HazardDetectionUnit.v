@@ -27,6 +27,3 @@ module HazardDetectionUnit
 		end
 	end
 endmodule
-
-	
-	

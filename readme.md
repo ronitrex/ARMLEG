@@ -193,7 +193,7 @@ The new improved architecture can now execute the basic instructions *load-store
 
 ![](./readme/uncondbranch.png)
 
-## Pipelining with Forwarding and Hazard Detection Unit(./src/ARMLEG.v)
+## Pipelining with Forwarding and Hazard Detection Unit
 Pipelining is an implementation technique in which multiple instructions are
 overlapped in execution.
 LEGv8 instructions classically take five steps:

@@ -11,5 +11,4 @@ module RegisterMux
 		1: registerMUXout = targetAddress;
 		default: registerMUXout = instructionMemory;
 	endcase
-
 endmodule

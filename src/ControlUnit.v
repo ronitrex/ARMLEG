@@ -31,9 +31,8 @@ module ControlUnit(
 			branch = 1;
 			ALUop = 01;
 
-		end else case(controlInstruction_in)
-			//Load
-			'b11111000010:    begin
+		end else case(controlInstruction_in)	
+			'b11111000010: begin             //Load
 				reg2Loc = 1;
 				ALUsrc = 1;
 				memtoReg = 1;
@@ -43,8 +42,7 @@ module ControlUnit(
 				branch = 0;
 				ALUop = 00;
 			end
-			//Store
-			'b11111000000:  begin
+			'b11111000000: begin	            //Store
 				reg2Loc = 1;
 				ALUsrc = 1;
 				regWrite = 0;
@@ -53,12 +51,10 @@ module ControlUnit(
 				branch = 0;
 				ALUop = 00;
 			end
-
-			// R-Type (ADD, SUB, AND, ORR)
 			'b10001011000,
 			'b11001011000,
 			'b10001010000,
-			'b10101010000:  begin
+			'b10101010000: begin               //R-Type (ADD, SUB, AND, ORR)
 				reg2Loc = 0;
 				ALUsrc = 0;
 				memtoReg = 0;

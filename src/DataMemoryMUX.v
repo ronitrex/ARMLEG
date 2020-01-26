@@ -11,5 +11,4 @@ module DataMemoryMUX
 		1: dataMemoryMUXout = readData;
 		default: dataMemoryMUXout = ALUresult;
 	endcase
-
 endmodule

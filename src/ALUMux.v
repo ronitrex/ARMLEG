@@ -11,5 +11,4 @@ module ALUMux
 		1: ALUMUXout = signExtendedData;
 		default: ALUMUXout = registerData;
 	endcase
-
 endmodule

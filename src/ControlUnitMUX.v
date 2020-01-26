@@ -11,5 +11,4 @@ module ControlUnitMUX
 		1: controlMuxout = controlInstruction_in;
 		default: controlMuxout = controlInstruction_in;
 	endcase
-
 endmodule

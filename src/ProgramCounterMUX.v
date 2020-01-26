@@ -11,5 +11,4 @@ module ProgramCounterMUX
 		1: programCounterMUXout = branch;
 		default: programCounterMUXout = adderResult;
 	endcase
-
 endmodule

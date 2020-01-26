@@ -35,6 +35,4 @@ module RegisterModule
 		regData1 <= registerData[readAddress1];
 		regData2 <= registerData[readAddress2];
 	end
-
-
 endmodule
