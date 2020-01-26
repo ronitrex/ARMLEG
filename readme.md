@@ -57,7 +57,7 @@ The Program Counter or PC reads the instructions from the instruction memory, th
 | Registers			|	64 bits		|	32	|
 | Data Memory   		|	64 bits		|	128 |
 
-### Program Counter
+### [Program Counter](./src/ProgramCounter.v)
 A CPU instruction is 64 bits wide. The *Program Counter* or PC goes through the Instruction Memory and fetches a 32 bit instruction in each cycle. 4 registers of 8 bits of information each from the Instruction Memory are read in *little endian byte order* and form the first 32 bits of the CPU instruction. That is,  
 
 	CPU_Instruction[8:0] = Instruction_Memory[PC+3];
@@ -67,8 +67,8 @@ A CPU instruction is 64 bits wide. The *Program Counter* or PC goes through the 
 
 ![](./readme/ProgramCounterCycle.png)
 
-### Instruction Memory
-The data is fetched from Instruction Memory in **Little Endian Byte Order**. 32-bit data is called a *“word”*. The Instruction Memory is read one word at a time. LEGv8 does not require *words* to be aligned in memory, except for instructions and the stack.
+### [Instruction Memory](./src/InstructionMemory.v)
+The data is fetched from Instruction Memory in [**Little Endian Byte Order**](https://chortle.ccsu.edu/AssemblyTutorial/Chapter-15/ass15_3.html). 32-bit data is called a *“word”*. The Instruction Memory is read one word at a time. LEGv8 does not require *words* to be aligned in memory, except for instructions and the stack.
 
 
 
@@ -107,7 +107,7 @@ Some examples of instructions that have been implemented in this project:
 
 
 
-### Register Module:
+### [Register Module](./src/RegisterModule.v)
 As mentioned before, the register module has 31 general purpose registers, each 64-bits wide.
 Register module schematic:
 ![](./readme/RegisterFile.png)
@@ -130,8 +130,8 @@ Register module feeding ALU :
 
 ![](./readme/RFALU.png)
 
-### Arithmetic Logic Unit or ALU :
-The operation codes determine how the ALU treats the data it receives from the Registers module. The ALU is used to calculate :
+### [Arithmetic Logic Unit or ALU](./src/ALU.v)
+The operation codes determine how the ALU treats the data it receives from the Registers module. The ALU is used to calculate:
 
 - Arithmetic result
 - Memory address for load/store
@@ -139,20 +139,19 @@ The operation codes determine how the ALU treats the data it receives from the R
 
 | ALU Operation code|   Operation performed	| 
 | ------------------|:----------|
-|	4'b0000	|A AND B	|
-|	4'b0001	|A OR B	|
-|	4'b0010	|A ADD B	|
-|	4'b0110	|A SUBTRACT B|
-|	4'b0111	|B (pass input B)|
-|	4'b1100	|A NOR B|
-|	4'b1111	|default or edge cases|
+|	**4'b0000**	|A AND B	|
+|	**4'b0001**	|A OR B	|
+|	**4'b0010**	|A ADD B	|
+|	**4'b0110**	|A SUBTRACT B|
+|	**4'b0111**	|B (pass input B)|
+|	**4'b1100**	|A NOR B|
+|	**4'b1111**	|default or edge cases|
 
 
 
-### Data Memory
+### [Data Memory](./src/DataMemory.v)
 
-
-The Data memory unit is a state element with inputs for the address and the write data, and a single output for the read result. There are separate read and write controls, although only one of these may be asserted on any given clock.  
+The Data memory unit is a state element which acts as a data storage medium. To retrieve data, it has inputs for the address and the write data, and a single output for the read result. There are separate read and write controls, although only one of these may be asserted on any given clock.  
 In this project, it is initialized as follows:
 
 | Register[location]|   Value	| 
@@ -172,7 +171,7 @@ In this project, it is initialized as follows:
 |memoryData[96]| 64'd12|
 
 
-### Sign-extend and Shift Left 2
+### [Sign-extend](./src/SignExtend.v) and [Shift Left 2](./src/ShiftLeft2.v)
 
 The Instruction Memory is read in chunks of 32-bits, whereas the CPU instruction is of 64 bits. The sign extension unit has the 32-bit instruction as input. From that, it selects a 9-bit for *load* and *store* or a 19-bit field for *compare and branch on zero*. It is then sign-extended into a 64-bit result appearing on the output.
 
@@ -183,7 +182,7 @@ Applying 2 left shifts -> 5'b10000 - (16, which is the program counter required.
 
 ![](./readme/Simpledatapath.png)
 
-### Control Unit
+### [Control Unit](./src/ControlUnit.v)
 
 A control unit is added to route the flow of data as per requirements. 
 ![](./readme/datapathwithcontrol.png)
@@ -194,7 +193,7 @@ The new improved architecture can now execute the basic instructions *load-store
 
 ![](./readme/uncondbranch.png)
 
-## Pipelining with Forwarding and Hazard Detection Unit
+## Pipelining with Forwarding and Hazard Detection Unit(./src/ARMLEG.v)
 Pipelining is an implementation technique in which multiple instructions are
 overlapped in execution.
 LEGv8 instructions classically take five steps:
@@ -208,7 +207,7 @@ LEGv8 instructions classically take five steps:
 ![](./readme/pipelinestage.png)
 
 
-### Forwarding Unit
+### [Forwarding Unit](./src/ForwardingUnit.v)
 Consider the following example,
 ![](./readme/forwardingexample.png)
 
@@ -225,7 +224,7 @@ The forwarding unit forwards the data to the ALU from different parts of the pip
 ForwardA and ForwardB *forward* the output from other stages.
 ![](./readme/forwardingMUXcontrol.png) 
 
-### Hazard Detection Unit
+### [Hazard Detection Unit](./src/HazardDetectionUnit.v)
 Consider the following example, 
 ![](./readme/hazardingexample.png) 
 Since the dependence between the *SUB* and the following instruction *AND*
@@ -235,7 +234,7 @@ The forwarding unit controls the ALU multiplexors to replace the value from a ge
 The hazard detection unit controls the writing of the PC and IF/ID registers plus the multiplexor that chooses between the real control values and all *0*s. The hazard detection unit stalls and deasserts the control fields if the load-use hazard test above is true.
 ![](./readme/hazardDetectionandForwarding.png)
 
-## Final Overview
+## [Overview of ARM-LEGv8 CPU](./src/ARMLEG.v)
 The Pipelined architecture featuring the Control Unit 
 ![](./readme/PipelineandControl.png)
 
