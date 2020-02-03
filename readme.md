@@ -1,4 +1,4 @@
-# Pipelined ARM-LEGv8 CPU with Forwarding and Hazard Detection
+# Pipelined ARM-LEGv8 CPU with Forwarding and Hazard Detection  [![GitHub](https://img.shields.io/github/license/ronitrex/ARMLEG)](./LICENSE)
 
 ## Table of contents
 + [**Introduction**](#introduction)
