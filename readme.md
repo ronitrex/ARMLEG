@@ -1,4 +1,6 @@
-# Pipelined ARM-LEGv8 CPU with Forwarding and Hazard Detection  [![GitHub](https://img.shields.io/github/license/ronitrex/ARMLEG)](./LICENSE)
+# ARM-LEGv8 CPU [![GitHub](https://img.shields.io/github/license/ronitrex/ARMLEG)](./LICENSE)
+
+Multi-cycle pipelined ARM-LEGv8 CPU with Forwarding and Hazard Detection as described in **'Computer Organization and Design ARM Edition'**. The CPU can execute *memory-reference instructions like LDUR and STUR*, *arithmetic-logical instructions like ADD, SUB, AND and ORR* and *branch instructions like B and CBZ.*
 
 ## Table of contents
 + [**Introduction**](#introduction)
