@@ -22,7 +22,7 @@ module ControlUnit(
 			ALUop = 01;
 
 		end else if (controlInstruction_in[10:3] == 8'b10110100) begin // Control bits for CBZ
-			reg2Loc = 0;
+			reg2Loc = 1;
 			ALUsrc = 0;
 			memtoReg = 0;
 			regWrite = 0;

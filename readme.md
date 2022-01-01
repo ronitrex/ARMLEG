@@ -195,6 +195,10 @@ The new improved architecture can now execute the basic instructions *load-store
 
 ![](./readme/uncondbranch.png)
 
+Control unit values for different instruction types.
+
+![](./readme/ControlUnit.png)
+
 ## Pipelining with Forwarding and Hazard Detection Unit
 Pipelining is an implementation technique in which multiple instructions are
 overlapped in execution.
@@ -551,5 +555,5 @@ A list of references and study material used for this project:
 + [**always(*) block**](https://class.ece.uw.edu/371/peckol/doc/Always@.pdf)
 + [**Nets**](https://inst.eecs.berkeley.edu/~cs150/Documents/Nets.pdf)
 + [**Verilog Quick Reference**](https://web.stanford.edu/class/ee183/handouts_win2003/VerilogQuickRef.pdf)
-+ [**LEG-v8 Reference Sheet**](http://www.eecs.umich.edu/courses/eecs370/eecs370.f19/resources/materials/ARM-v8-Quick-Reference-Guide.pdf)
++ [**LEG-v8 Reference Sheet**](https://www.usna.edu/Users/cs/lmcdowel/courses/ic220/S20/resources/ARM-v8-Quick-Reference-Guide.pdf)
 + [**Computer Organization and Design ARM Edition, 1st Edition - David Patterson, John Hennessy**](https://www.elsevier.com/books/computer-organization-and-design-arm-edition/patterson/978-0-12-801733-3)
